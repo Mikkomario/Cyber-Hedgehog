@@ -1,0 +1,510 @@
+{
+	"id": 48,
+	"created": "2018-09-28T11:29:00+03:00",
+	"active": true,
+	"archived": false,
+	"formStructure": 3,
+	"formStructureType": "response",
+	"moduleType": "response",
+	"language": "fi",
+	"service": 8,
+	"serviceInstance": 13,
+	"serviceContent": 44,
+	"serviceTopic": 12,
+	"serviceSection": 11,
+	"parentFormStructure": null,
+	"parentFormResponse": null,
+	"subFormResponses": [],
+	"locked": null,
+	"fieldMessages": [],
+	"sections": [
+		{
+			"title": {
+				"id": 36,
+				"type": "title",
+				"name": "1. Yrityksen yhteystiedot",
+				"helpText": "",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 37,
+					"type": "text",
+					"name": "Nimi",
+					"helpText": "Lisää tähän yrityksen nimi.",
+					"readOnly": true,
+					"value": "Suomen Tietosuojaturva"
+				},
+				{
+					"id": 39,
+					"type": "text",
+					"name": "Sähköpostiosoite",
+					"helpText": "Lisää tähän yrityksen sähköpostiosoite. Tämän sähköpostiosoitteen ei tarvitse olla yksilöity kehenkään henkilöön.",
+					"readOnly": true,
+					"value": "info@tietosuojaturva.fi"
+				},
+				{
+					"id": 61,
+					"type": "text",
+					"name": " Puhelinnumero",
+					"helpText": "Lisää tähän yrityksen puhelinnumero. Tämän puhelinnumeron ei tarvitse yksilöityä kehenkään henkilöön, vaan voi olla esimerkiksi yrityksen keskuksen numero. ",
+					"readOnly": true,
+					"value": "+358925107202"
+				},
+				{
+					"id": 38,
+					"type": "text",
+					"name": "Osoite",
+					"helpText": "Lisää tähän yrityksen käyntiosoite.",
+					"readOnly": true,
+					"value": "Metallimiehenkuja 10 02150 Espoo"
+				},
+				{
+					"id": 40,
+					"type": "text",
+					"name": "Y-tunnus",
+					"helpText": "Lisää tähän yrityksen Y-tunnus.",
+					"readOnly": true,
+					"value": "2878928-5"
+				}
+			]
+		},
+		{
+			"title": {
+				"id": 41,
+				"type": "title",
+				"name": "2. Yhteyshenkilön yhteystiedot",
+				"helpText": "Tällä henkilöllä tulisi olla valmiudet keskustella esimerkiksi tietosuojaviranomaisen kanssa yrityksen tietosuoja-asioista ja käytännöistä. Mahdollisessa tietosuojaloukkaustilanteessa (tietomurto yms) on erityisen tärkeää toimia kaikkien asetuksen ohjeiden mukaisesti ja minimoida mahdolliset tilanteesta aiheutuvat lisäkustannukset yritykselle.",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 69,
+					"type": "dropdown",
+					"name": "Rooli",
+					"helpText": "Valitse alasvetolaatikosta yhteyshenkilön rooli.\n\nYrityksen valtuuttama yrityksen tietosuoja-asioista vastaava yhteyshenkilö voi olla esimerkiksi yrityksen työntekijä, yrityksen valtuuttama edustaja tai yrityksen nimittämä tietosuojavastaava. Tietosuojavastaava voi olla yrityksen työntekijä tai ulkoistettuna palveluna hankittu tietosuojavastaava, joka hoitaa monen yrityksen tietosuoja-asioita.",
+					"readOnly": true,
+					"value": {
+						"id": 2
+					}
+				},
+				{
+					"id": 42,
+					"type": "text",
+					"name": "Nimi:",
+					"helpText": "Lisää tähän tietosuoja-asioista vastaavan yhteyshenkilön nimi.",
+					"readOnly": true,
+					"value": "Kimmo Aaltonen"
+				},
+				{
+					"id": 43,
+					"type": "text",
+					"name": "Sähköpostiosoite",
+					"helpText": "Lisää tähän yhteyshenkilön sähköpostiosoite. ",
+					"readOnly": true,
+					"value": "kimmo.aaltonen@cyberhedgehog.com"
+				},
+				{
+					"id": 63,
+					"type": "text",
+					"name": " Puhelinnumero",
+					"helpText": "Lisää tähän yhteyshenkilön puhelinnumero.",
+					"readOnly": true,
+					"value": "+358449812231"
+				},
+				{
+					"id": 65,
+					"type": "text",
+					"name": "Osoite",
+					"helpText": "Lisää tähän yhteyshenkilön osoite. ",
+					"readOnly": true,
+					"value": "Metallimiehenkuja 10 02150 Espoo"
+				}
+			]
+		},
+		{
+			"title": {
+				"id": 62,
+				"type": "title",
+				"name": "3. Yrityksen tekemät toimet informointivelvoitteen täyttämiseksi",
+				"helpText": "Ohjeistuksessamme kuvataan tarkemmin asioita, jotka liittyvät tietosuoja-asetuksen alle 250-henkilöä työllistäville PK-yrityksille annettuihin vaatimuksiin osoitusvelvollisuuden ja informointelvoitteen täyttämisestä.",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 124,
+					"type": "fixed_value",
+					"name": "henkilötiedot on kerätty ilman rekisteröidyn suoraa suostumusta",
+					"helpText": "",
+					"readOnly": true,
+					"value": "Jos yrityksen rekisterissä olevia henkilötietoja ei ole saatu rekisteröidyltä itseltään, yritys on toimitttanut tietosuojalausekkeella rekisteröidyille seuraavat tiedot:"
+				},
+				{
+					"id": 125,
+					"type": "checkbox",
+					"name": "yrityksen tietosuoja-asioista vastaavan henkilön, edustajan tai mahdollisen tietosuojavastaavan yhteystiedot",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 126,
+					"type": "checkbox",
+					"name": "henkilötietojen käsittelyn tarkoitukset sekä käsittelyn oikeusperuste, eli tietosuoja-asetuksen peruste käsitellä henkilötietoja",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 127,
+					"type": "checkbox",
+					"name": "rekisterissä olevat henkilötietoryhmät",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 128,
+					"type": "checkbox",
+					"name": "henkilötietojen siirto EU:n / ETA:n ulkopuolella olevalle vastaanottajalle tai kansainväliselle järjestölle",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 129,
+					"type": "checkbox",
+					"name": "henkilötietojen säilytysaika tai jos se ei ole mahdollista, tämän ajan määrittämiskriteerit",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 130,
+					"type": "checkbox",
+					"name": "rekisterinpitäjän tai kolmannen osapuolen oikeutetut edut",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 131,
+					"type": "checkbox",
+					"name": "rekisteröidyn oikeus tarkistaa itseään koskevat tiedot",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 132,
+					"type": "checkbox",
+					"name": "rekisteröisyn oikeus pyytää tietojen oikaisemista tai poistamista tai käsittelyn rajoittamista",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 133,
+					"type": "checkbox",
+					"name": "rekisteröisyn oikeus vastustaa käsittelyä",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 134,
+					"type": "checkbox",
+					"name": "rekisteröidyn oikeus siirtää omat tietonsa järjestelmästä toiseen",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 135,
+					"type": "checkbox",
+					"name": "rekisteröidyn oikeus tehdä valitus valvontaviranomaiselle",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 136,
+					"type": "checkbox",
+					"name": "mistä henkilötiedot on saatu sekä tarvittaessa se, onko tiedot saatu yleisesti saatavilla olevista lähteistä",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 137,
+					"type": "checkbox",
+					"name": "automaattisen päätöksenteon eli profiloinnin olemassaolo",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 138,
+					"type": "fixed_value",
+					"name": "henkilötiedot on saatu suoraan rekisteröidyltä",
+					"helpText": "",
+					"readOnly": true,
+					"value": "Jos yrityksen henkilötiedot on saatu suoraan rekisteröidyltä, yritys on toimittanut tietosuojalausekkeella rekisteröidylle seuraavat tiedot:"
+				},
+				{
+					"id": 141,
+					"type": "checkbox",
+					"name": "yrityksen tietosuoja-asioista vastaavan henkilön, edustajan tai mahdollisen tietosuojavastaavan yhteystiedot",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 142,
+					"type": "checkbox",
+					"name": "peruste, jolla henkilötietoja saa käsitellä",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 143,
+					"type": "checkbox",
+					"name": "henkilötietojen käsittelyn tarkoitukset",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 146,
+					"type": "checkbox",
+					"name": "henkilötietojen vastaanottajat tai vastaanottajaryhmät",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 145,
+					"type": "checkbox",
+					"name": "henkilötietojen mahdollinen siirto EU:n / ETA:n ulkopuolelle",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 148,
+					"type": "checkbox",
+					"name": "rekisteröidyn oikeus pyytää rekisterinpitäjältä pääsy häntä itseään koskeviin henkilötietoihin, sekä oikeus pyytää tietojen oikaisemista tai poistamista tai käsittelyn rajoittamista tai vastustaa käsittelyä sekä oikeutta siirtää tiedot järjestelmästä toiseen",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 144,
+					"type": "checkbox",
+					"name": "oikeus peruuttaa suostumus henkilötietojen jatkokäsittelyyn milloin tahansa ",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 149,
+					"type": "checkbox",
+					"name": "onko henkilötietojen antaminen lakisääteinen, sopimukseen perustuva tai sopimuksen tekemisen edellyttämä vaatimus",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 147,
+					"type": "checkbox",
+					"name": "onko rekisteröidyn pakko toimittaa henkilötiedot ja mitä tällaisten tietojen antamatta jättämisestä mahdollisesti seuraa",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				},
+				{
+					"id": 150,
+					"type": "checkbox",
+					"name": "automaattisen päätöksenteon ja profiloinnin olemassaolo, sekä kuvaus siihen liittyvästä logiikasta ja vaikutuksista rekisteröidylle",
+					"helpText": "",
+					"readOnly": true,
+					"value": true
+				}
+			]
+		},
+		{
+			"title": {
+				"id": 48,
+				"type": "title",
+				"name": "4. Suullisesti rekisteröidyiltä pyydetyt tiedot",
+				"helpText": "Yrityksen tulee dokumentoida henkilötiedot , joita se on kysynyt suullisesti rekisteröidyiltä esimerkiksi messuilla. Tähän kannattaa listata mahdollisimman yksityiskohtaisesti suulliseen suostumukseen liityvät asiat.",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 139,
+					"type": "text",
+					"name": " Yritys on pyytänyt rekisteröidyiltä suullisesti seuraavia henkilötietoja",
+					"helpText": "Listaa tähän kaikki yrityksen suullisesti kysymät henkilötiedot. ",
+					"readOnly": true,
+					"value": "-"
+				}
+			]
+		},
+		{
+			"title": {
+				"id": 82,
+				"type": "title",
+				"name": "5. Rekisteröidyn tunnistamistavat",
+				"helpText": "",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 179,
+					"type": "multiselect",
+					"name": "Yritys käyttää seuraavia tapoja rekisteröityjen tunnistamiseen",
+					"helpText": "Lisää tähän valikosta kaikki tavat joita yritys käyttää rekisteröityjen tunnistamiseen.",
+					"readOnly": true,
+					"value": [
+						{
+							"id": 174
+						}
+					]
+				},
+				{
+					"id": 140,
+					"type": "text",
+					"name": "muita tapoja",
+					"helpText": "Lisää tähän tunnistustavat, joita ei löytynyt valikosta.",
+					"readOnly": true,
+					"value": "-"
+				}
+			]
+		},
+		{
+			"title": {
+				"id": 80,
+				"type": "title",
+				"name": "6. Kuvaus yrityksen teknisistä ja organisatorisista suojatoimista",
+				"helpText": "Yrityksen velvollisuus on tietosuoja-asetuksen mukaisesti suojella ihmisiltä kerättyjä henkilötietoja. Yrityksen tulee kyetä tarvittaessa osoittamaan valvontaviranomaiselle keinot, joita yritys käyttää rekisteröityjen henkilötietojen suojelemiseksi.",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 81,
+					"type": "multiselect",
+					"name": "Yritys on tehnyt seuraavia henkilötietoja suojaavia toimenpiteitä",
+					"helpText": "Lisää tähän valikosta tavat joita yritys käyttää rekisteröityjen henkilötietojen suojaamiseen. \nTietosuojaohjeistuksestamme löytyy tarkempia tietoja yrityksen keräämien henkilötietojen suojelusta. \n\n",
+					"readOnly": true,
+					"value": [
+						{
+							"id": 47
+						},
+						{
+							"id": 50
+						},
+						{
+							"id": 51
+						},
+						{
+							"id": 52
+						},
+						{
+							"id": 54
+						},
+						{
+							"id": 192
+						},
+						{
+							"id": 193
+						}
+					]
+				},
+				{
+					"id": 197,
+					"type": "text",
+					"name": "Muita toimenpiteitä",
+					"helpText": "Lisää tähän muita yrityksen käyttämiä suojaavia toimenpiteitä, joita ei löytynyt valikosta.",
+					"readOnly": true,
+					"value": ""
+				}
+			]
+		},
+		{
+			"title": {
+				"id": 203,
+				"type": "title",
+				"name": "7. Arkaluontoisten henkilötietojen käsittely",
+				"helpText": "",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 178,
+					"type": "fixed_value",
+					"name": "",
+					"helpText": "Tämä seloste käsittelytoimista -lomake on vain yrityksille, jotka eivät käsittele arkaluontoisia henkilötietoja. ",
+					"readOnly": true,
+					"value": "Yrityksemme ei kerää seuraavia arkaluontoisia tietoja:  rotu tai etninen ryhmä, poliittinen mielipide, uskonnollinen tai filosofinen näkemys, ammattiliiton jäsenyys, biometrinen tunniste, terveystiedot, seksuaalinen suuntautuneisuus, rikoksiin liittyvät tiedot"
+				}
+			]
+		},
+		{
+			"title": {
+				"id": 204,
+				"type": "title",
+				"name": "8. Henkilötietojen käsittelyn laajuus",
+				"helpText": "",
+				"readOnly": true,
+				"value": ""
+			},
+			"fields": [
+				{
+					"id": 198,
+					"type": "fixed_value",
+					"name": "",
+					"helpText": "Tämä seloste käsittelytoimista -lomake on vain yrityksille, joiden ydinliiketoimintaa ei ole henkilötietojen käsittely.",
+					"readOnly": true,
+					"value": "Yrityksemme ydinliiketoimintaa ei ole henkilötietojen käsittely. Keräämme ja käsittelemme vain omaan liiketoimintaamme liittyviä henkilötietoja. "
+				},
+				{
+					"id": 191,
+					"type": "created",
+					"name": "Luotu",
+					"helpText": "",
+					"readOnly": true,
+					"value": {
+						"datetime": "2018-09-28 11:29:00",
+						"user": "Aaltonen Kimmo"
+					}
+				},
+				{
+					"id": 192,
+					"type": "updated",
+					"name": "Päivitetty",
+					"helpText": "",
+					"readOnly": true,
+					"value": {
+						"datetime": "2018-09-28 11:29:00",
+						"user": "Aaltonen Kimmo",
+						"noModifications": true
+					}
+				}
+			]
+		}
+	],
+	"change": {
+		"fieldId": null,
+		"oldValue": null,
+		"newValue": null
+	}
+}

@@ -1,0 +1,65 @@
+
+2019-08-28T11:26:38.855
+Update process failed
+utopia.vault.database.DBException: Failed to insert storable: {"id": null, "company": 2, "score": 0.835203366058906, "event": 1}
+	at utopia.vault.database.DBException.rethrow(DBException.scala:21)
+	at utopia.vault.model.immutable.Storable.insert(Storable.scala:258)
+	at utopia.vault.model.immutable.Storable.insert$(Storable.scala:230)
+	at ch.database.model.RiskScore.insert(RiskScore.scala:40)
+	at ch.database.RiskScore$.insert(RiskScore.scala:33)
+	at ch.controller.RiskScorer$.$anonfun$run$4(RiskScorer.scala:48)
+	at scala.collection.Iterator.foreach(Iterator.scala:941)
+	at scala.collection.Iterator.foreach$(Iterator.scala:941)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1429)
+	at scala.collection.MapLike$DefaultValuesIterable.foreach(MapLike.scala:213)
+	at ch.controller.RiskScorer$.$anonfun$run$3(RiskScorer.scala:43)
+	at ch.controller.RiskScorer$.$anonfun$run$3$adapted(RiskScorer.scala:38)
+	at scala.Option.foreach(Option.scala:274)
+	at ch.controller.RiskScorer$.$anonfun$run$1(RiskScorer.scala:38)
+	at scala.runtime.java8.JFunction1$mcVI$sp.apply(JFunction1$mcVI$sp.java:23)
+	at scala.Option.foreach(Option.scala:274)
+	at ch.controller.RiskScorer$.run(RiskScorer.scala:21)
+	at ch.backend.main.CHBackEnd$.$anonfun$completeOnce$1(CHBackEnd.scala:48)
+	at ch.backend.main.CHBackEnd$.$anonfun$completeOnce$1$adapted(CHBackEnd.scala:42)
+	at utopia.vault.database.ConnectionPool$ReusableConnection.doAndLeave(ConnectionPool.scala:170)
+	at utopia.vault.database.ConnectionPool$ReusableConnection.$anonfun$tryAndLeave$1(ConnectionPool.scala:164)
+	at scala.util.Try$.apply(Try.scala:213)
+	at utopia.vault.database.ConnectionPool$ReusableConnection.tryAndLeave(ConnectionPool.scala:164)
+	at utopia.vault.database.ConnectionPool.tryWith(ConnectionPool.scala:94)
+	at ch.backend.main.CHBackEnd$.completeOnce(CHBackEnd.scala:42)
+	at ch.backend.main.CHBackEnd$.$anonfun$loop$1(CHBackEnd.scala:64)
+	at utopia.flow.async.SimpleLoop.runOnce(Loop.scala:117)
+	at utopia.flow.async.Loop.run(Loop.scala:82)
+	at utopia.flow.async.Loop.run$(Loop.scala:75)
+	at utopia.flow.async.SimpleLoop.run(Loop.scala:115)
+	at utopia.flow.async.WorkerThread.$anonfun$run$2(ThreadPool.scala:138)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at scala.util.Try$.apply(Try.scala:213)
+	at utopia.flow.async.WorkerThread.run(ThreadPool.scala:138)
+Caused by: utopia.vault.database.DBException: DB query failed.
+Sql: INSERT INTO `cyber_risk_score` (`company`, `event`) VALUES (?, ?)
+Values:[2, 1]
+	at utopia.vault.database.Connection.apply(Connection.scala:190)
+	at utopia.vault.database.Connection.apply(Connection.scala:136)
+	at utopia.vault.sql.Insert$.apply(Insert.scala:43)
+	at utopia.vault.sql.Insert$.apply(Insert.scala:56)
+	at utopia.vault.model.immutable.Storable.insert(Storable.scala:240)
+	... 32 more
+Caused by: java.sql.SQLException: (conn:9) Field 'scrore' doesn't have a default value
+Query is: INSERT INTO `cyber_risk_score` (`company`, `event`) VALUES (?, ?), parameters [2,1]
+	at org.mariadb.jdbc.internal.util.ExceptionMapper.get(ExceptionMapper.java:150)
+	at org.mariadb.jdbc.internal.util.ExceptionMapper.getException(ExceptionMapper.java:101)
+	at org.mariadb.jdbc.internal.util.ExceptionMapper.throwAndLogException(ExceptionMapper.java:77)
+	at org.mariadb.jdbc.MariaDbStatement.executeQueryEpilog(MariaDbStatement.java:226)
+	at org.mariadb.jdbc.MariaDbServerPreparedStatement.executeInternal(MariaDbServerPreparedStatement.java:413)
+	at org.mariadb.jdbc.MariaDbServerPreparedStatement.execute(MariaDbServerPreparedStatement.java:362)
+	at utopia.vault.database.Connection.apply(Connection.scala:178)
+	... 36 more
+Caused by: org.mariadb.jdbc.internal.util.dao.QueryException: Field 'scrore' doesn't have a default value
+Query is: INSERT INTO `cyber_risk_score` (`company`, `event`) VALUES (?, ?), parameters [2,1]
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.readErrorPacket(AbstractQueryProtocol.java:1144)
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.readPacket(AbstractQueryProtocol.java:1076)
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.getResult(AbstractQueryProtocol.java:1031)
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.executePreparedQuery(AbstractQueryProtocol.java:617)
+	at org.mariadb.jdbc.MariaDbServerPreparedStatement.executeInternal(MariaDbServerPreparedStatement.java:401)
+	... 38 more

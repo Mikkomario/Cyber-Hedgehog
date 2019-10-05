@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BackEnd/BackEnd.iml" filepath="$PROJECT_DIR$/BackEnd/BackEnd.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Cyber-Hedgehog.iml" filepath="$PROJECT_DIR$/Cyber-Hedgehog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Granite/Granite.iml" filepath="$PROJECT_DIR$/Granite/Granite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MailChimp/MailChimp.iml" filepath="$PROJECT_DIR$/MailChimp/MailChimp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia-Access-Scala/.idea/Utopia-Access-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Access-Scala/.idea/Utopia-Access-Scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia-Disciple-Scala/.idea/Utopia-Disciple-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Disciple-Scala/.idea/Utopia-Disciple-Scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia-Flow-Scala/Utopia-Flow-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Flow-Scala/Utopia-Flow-Scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia-Vault-Scala/.idea/Utopia-Vault-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Vault-Scala/.idea/Utopia-Vault-Scala.iml" />
+    </modules>
+  </component>
+</project>

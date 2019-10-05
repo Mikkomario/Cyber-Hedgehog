@@ -1,0 +1,128 @@
+
+2019-07-21T11:56:36.741
+Update process failed
+utopia.vault.database.DBException: Failed to insert storable: {"value": "'kimmo.aaltonen@cyberhedgehog.com'", "read": 1, "label": 2, "id": null}
+	at utopia.vault.database.DBException.rethrow(DBException.scala:21)
+	at utopia.vault.model.immutable.Storable.insert(Storable.scala:257)
+	at utopia.vault.model.immutable.Storable.insert$(Storable.scala:229)
+	at ch.database.model.ContactData.insert(ContactData.scala:22)
+	at ch.database.DataInterface.$anonfun$insertData$1(DataInterface.scala:135)
+	at scala.collection.Iterator.foreach(Iterator.scala:941)
+	at scala.collection.Iterator.foreach$(Iterator.scala:941)
+	at scala.collection.AbstractIterator.foreach(Iterator.scala:1429)
+	at scala.collection.IterableLike.foreach(IterableLike.scala:74)
+	at scala.collection.IterableLike.foreach$(IterableLike.scala:73)
+	at scala.collection.AbstractIterable.foreach(Iterable.scala:56)
+	at ch.database.DataInterface.insertData(DataInterface.scala:135)
+	at ch.database.DataInterface.insertData$(DataInterface.scala:133)
+	at ch.database.Contact$.insertData(Contact.scala:16)
+	at ch.granite.controller.ResultHandler$.apply(ResultHandler.scala:74)
+	at ch.granite.controller.ReadGraniteData$.$anonfun$readResponse$3(ReadGraniteData.scala:177)
+	at ch.granite.controller.ReadGraniteData$.$anonfun$readResponse$3$adapted(ReadGraniteData.scala:174)
+	at scala.util.Success.$anonfun$map$1(Try.scala:255)
+	at scala.util.Success.map(Try.scala:213)
+	at ch.granite.controller.ReadGraniteData$.$anonfun$readResponse$1(ReadGraniteData.scala:174)
+	at scala.util.Success.flatMap(Try.scala:251)
+	at ch.granite.controller.ReadGraniteData$.readResponse(ReadGraniteData.scala:171)
+	at ch.granite.controller.ReadGraniteData$.$anonfun$synchronously$3(ReadGraniteData.scala:96)
+	at ch.granite.controller.ReadGraniteData$.$anonfun$synchronously$3$adapted(ReadGraniteData.scala:94)
+	at scala.collection.Iterator$$anon$10.next(Iterator.scala:459)
+	at scala.collection.Iterator.find(Iterator.scala:992)
+	at scala.collection.Iterator.find$(Iterator.scala:990)
+	at scala.collection.AbstractIterator.find(Iterator.scala:1429)
+	at scala.collection.IterableLike.find(IterableLike.scala:81)
+	at scala.collection.IterableLike.find$(IterableLike.scala:80)
+	at scala.collection.SeqViewLike$AbstractTransformed.find(SeqViewLike.scala:40)
+	at utopia.flow.util.CollectionExtensions$RichTraversable$.findMap$extension(CollectionExtensions.scala:157)
+	at ch.granite.controller.ReadGraniteData$.$anonfun$synchronously$2(ReadGraniteData.scala:94)
+	at ch.granite.controller.ReadGraniteData$.$anonfun$synchronously$2$adapted(ReadGraniteData.scala:73)
+	at scala.collection.Iterator$$anon$10.next(Iterator.scala:459)
+	at scala.collection.Iterator.find(Iterator.scala:992)
+	at scala.collection.Iterator.find$(Iterator.scala:990)
+	at scala.collection.AbstractIterator.find(Iterator.scala:1429)
+	at scala.collection.IterableLike.find(IterableLike.scala:81)
+	at scala.collection.IterableLike.find$(IterableLike.scala:80)
+	at scala.collection.SeqViewLike$AbstractTransformed.find(SeqViewLike.scala:40)
+	at utopia.flow.util.CollectionExtensions$RichTraversable$.findMap$extension(CollectionExtensions.scala:157)
+	at ch.granite.controller.ReadGraniteData$.synchronously(ReadGraniteData.scala:73)
+	at ch.backend.controller.UpdateOnce$.$anonfun$apply$1(UpdateOnce.scala:39)
+	at scala.util.Success.flatMap(Try.scala:251)
+	at ch.backend.controller.UpdateOnce$.apply(UpdateOnce.scala:36)
+	at ch.backend.test.RunOnceTest$.$anonfun$new$1(RunOnceTest.scala:39)
+	at ch.backend.test.RunOnceTest$.$anonfun$new$1$adapted(RunOnceTest.scala:36)
+	at utopia.vault.database.ConnectionPool$ReusableConnection.doAndLeave(ConnectionPool.scala:170)
+	at utopia.vault.database.ConnectionPool.apply(ConnectionPool.scala:81)
+	at ch.backend.test.RunOnceTest$.delayedEndpoint$ch$backend$test$RunOnceTest$1(RunOnceTest.scala:36)
+	at ch.backend.test.RunOnceTest$delayedInit$body.apply(RunOnceTest.scala:24)
+	at scala.Function0.apply$mcV$sp(Function0.scala:39)
+	at scala.Function0.apply$mcV$sp$(Function0.scala:39)
+	at scala.runtime.AbstractFunction0.apply$mcV$sp(AbstractFunction0.scala:17)
+	at scala.App.$anonfun$main$1$adapted(App.scala:80)
+	at scala.collection.immutable.List.foreach(List.scala:392)
+	at scala.App.main(App.scala:80)
+	at scala.App.main$(App.scala:78)
+	at ch.backend.test.RunOnceTest$.main(RunOnceTest.scala:24)
+	at ch.backend.test.RunOnceTest.main(RunOnceTest.scala)
+Caused by: utopia.vault.database.DBException: DB query failed.
+Sql: INSERT INTO `contact_data` (`value`, `read`, `label`) VALUES (?, ?, ?)
+Values:["kimmo.aaltonen@cyberhedgehog.com", 1, 2]
+	at utopia.vault.database.Connection.apply(Connection.scala:186)
+	at utopia.vault.database.Connection.apply(Connection.scala:135)
+	at utopia.vault.sql.Insert$.apply(Insert.scala:43)
+	at utopia.vault.sql.Insert$.apply(Insert.scala:56)
+	at utopia.vault.model.immutable.Storable.insert(Storable.scala:239)
+	... 59 more
+Caused by: java.sql.SQLException: (conn:11) Field 'contact' doesn't have a default value
+Query is: INSERT INTO `contact_data` (`value`, `read`, `label`) VALUES (?, ?, ?), parameters ['"kimmo.aaltonen@cyberhedgehog.com"',1,2]
+	at org.mariadb.jdbc.internal.util.ExceptionMapper.get(ExceptionMapper.java:150)
+	at org.mariadb.jdbc.internal.util.ExceptionMapper.getException(ExceptionMapper.java:101)
+	at org.mariadb.jdbc.internal.util.ExceptionMapper.throwAndLogException(ExceptionMapper.java:77)
+	at org.mariadb.jdbc.MariaDbStatement.executeQueryEpilog(MariaDbStatement.java:226)
+	at org.mariadb.jdbc.MariaDbServerPreparedStatement.executeInternal(MariaDbServerPreparedStatement.java:413)
+	at org.mariadb.jdbc.MariaDbServerPreparedStatement.execute(MariaDbServerPreparedStatement.java:362)
+	at utopia.vault.database.Connection.apply(Connection.scala:174)
+	... 63 more
+Caused by: org.mariadb.jdbc.internal.util.dao.QueryException: Field 'contact' doesn't have a default value
+Query is: INSERT INTO `contact_data` (`value`, `read`, `label`) VALUES (?, ?, ?), parameters ['"kimmo.aaltonen@cyberhedgehog.com"',1,2]
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.readErrorPacket(AbstractQueryProtocol.java:1144)
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.readPacket(AbstractQueryProtocol.java:1076)
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.getResult(AbstractQueryProtocol.java:1031)
+	at org.mariadb.jdbc.internal.protocol.AbstractQueryProtocol.executePreparedQuery(AbstractQueryProtocol.java:617)
+	at org.mariadb.jdbc.MariaDbServerPreparedStatement.executeInternal(MariaDbServerPreparedStatement.java:401)
+	... 65 more
+
+2019-07-21T12:03:35.958
+Received non-OK status to contact patch. Response: utopia.disciple.http.BufferedResponse@a2d7a17
+
+2019-07-21T12:33:45.502
+Received non-OK status to contact patch. Response: Not Found (404): Success(). Headers: {"server": "openresty", "x-request-id": "aa66ebd7-38b2-43eb-9292-68cbcfd66d60", "date": "Sun, 21 Jul 2019 09:33:46 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.361da0beca2a089ab8beafd4f8098a4f; expires=Mon, 20-Jul-2020 09:33:45 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T12:33:45.740
+Received non-OK status to contact patch. Response: Not Found (404): Success(). Headers: {"server": "openresty", "x-request-id": "3503ec19-0599-4cde-aaf2-e4d73772efa9", "date": "Sun, 21 Jul 2019 09:33:46 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.1c36ff4f7a36c1e21e1f5f4fe0dd1370; expires=Mon, 20-Jul-2020 09:33:46 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T12:45:07.476
+Received non-OK status to contact patch. Response: Not Found (404): Success(). Headers: {"server": "openresty", "x-request-id": "fe5a5a7f-204e-4ac0-ac8c-6afc367427c0", "date": "Sun, 21 Jul 2019 09:45:08 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.a94c3d23fba60d97d79fb3838d38d2c7; expires=Mon, 20-Jul-2020 09:45:07 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T12:45:07.749
+Received non-OK status to contact patch. Response: Not Found (404): Success(). Headers: {"server": "openresty", "x-request-id": "57b7ed9e-3403-4b91-a09d-03cf610a4116", "date": "Sun, 21 Jul 2019 09:45:08 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.9cc0694f36b4dd4e35e3facffe582c63; expires=Mon, 20-Jul-2020 09:45:08 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T13:29:25.252
+Received non-OK status to contact patch. Response: Not Found (404): Success(). Headers: {"server": "openresty", "x-request-id": "3484c773-8629-4f32-8729-3f8550257445", "date": "Sun, 21 Jul 2019 10:29:25 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.ba9b049c3231e2b985b3c4bd8ebf5bbc; expires=Mon, 20-Jul-2020 10:29:25 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T13:29:25.508
+Received non-OK status to contact patch. Response: Not Found (404): Success(). Headers: {"server": "openresty", "x-request-id": "95bcdf1c-c470-416f-8948-2ed593191fce", "date": "Sun, 21 Jul 2019 10:29:26 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.3b25354fcb2c985329adba07ed58aff6; expires=Mon, 20-Jul-2020 10:29:25 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T13:33:34.586
+Received non-OK status to contact patch. Response: Not Found (404): Failure(Response is empty). Headers: {"server": "openresty", "x-request-id": "b852c6b6-2760-478f-9785-a22a048d485c", "date": "Sun, 21 Jul 2019 10:33:35 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.cffaca3ebbf94c5f2e3c5e251bb53c7a; expires=Mon, 20-Jul-2020 10:33:35 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T13:33:34.639
+Received non-OK status to contact patch. Response: Not Found (404): Failure(Response is empty). Headers: {"server": "openresty", "x-request-id": "b2551ba4-6cd9-458e-8466-f068311a8030", "date": "Sun, 21 Jul 2019 10:33:35 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.108c22f07489c4fcee700a609d97d398; expires=Mon, 20-Jul-2020 10:33:35 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T13:40:08.094
+Received non-OK status to contact patch. Response: Not Found (404): Success({"type":"http://developer.mailchimp.com/documentation/mailchimp/guides/error-glossary/","title":"Resource Not Found","status":404,"detail":"Invalid path","instance":"fecb9f82-3a2d-4e76-be87-4e89a9279bf9"}). Headers: {"server": "openresty", "x-request-id": "fecb9f82-3a2d-4e76-be87-4e89a9279bf9", "date": "Sun, 21 Jul 2019 10:40:08 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.f29cb00f87995ac536c147659797b88a; expires=Mon, 20-Jul-2020 10:40:08 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T13:40:08.325
+Received non-OK status to contact patch. Response: Not Found (404): Success({"type":"http://developer.mailchimp.com/documentation/mailchimp/guides/error-glossary/","title":"Resource Not Found","status":404,"detail":"Invalid path","instance":"45683b9c-bac1-4923-86b7-fa84ba0179da"}). Headers: {"server": "openresty", "x-request-id": "45683b9c-bac1-4923-86b7-fa84ba0179da", "date": "Sun, 21 Jul 2019 10:40:08 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.a4e14929df016f8ae5b45bc4cec9b011; expires=Mon, 20-Jul-2020 10:40:08 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
+
+2019-07-21T13:50:49.680
+MailChimp API returned a non-OK response for segment update. Response: Bad Request (400): Success({"type":"http://developer.mailchimp.com/documentation/mailchimp/guides/error-glossary/","title":"Invalid Resource","status":400,"detail":"The resource submitted could not be validated. For field-specific details, see the 'errors' array.","instance":"7f150e97-cef1-4fde-87b8-788b456efce7","errors":[{"field":"members_to_add","message":"None of the emails provided were subscribed to the list"}]}). Headers: {"server": "openresty", "x-request-id": "7f150e97-cef1-4fde-87b8-788b456efce7", "date": "Sun, 21 Jul 2019 10:50:50 GMT", "content-type": "application/problem+json; charset=utf-8", "link": "<https://us12.api.mailchimp.com/schema/3.0/ProblemDetailDocument.json>; rel='describedBy'", "set-cookie": "_mcid=1.0f427968ce7280b6f93dd1c3299bc9cf; expires=Mon, 20-Jul-2020 10:50:50 GMT; Max-Age=31536000; path=/; domain=.mailchimp.com", "connection": "close", "vary": "Accept-Encoding"}
