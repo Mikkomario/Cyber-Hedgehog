@@ -20,7 +20,7 @@ object Field extends StorableFactoryWithValidation[granite.model.Field]
 	override def table = Tables.field
 	
 	override protected def fromValidatedModel(valid: immutable.Model[Constant]) = granite.model.Field(valid("id").getInt,
-		valid("serviceId").getInt, valid("fieldId").getInt)
+		valid("service").getInt, valid("graniteId").getInt)
 	
 	
 	// OTHER	-------------------------
@@ -35,15 +35,15 @@ object Field extends StorableFactoryWithValidation[granite.model.Field]
 /**
   * Used for searching & updating granite fields
   * @param id Unique id
-  * @param serviceId Granite service id
-  * @param fieldId Granite field id
+  * @param serviceId Id of service this field is part of
+  * @param graniteId Granite field id
   * @author Mikko Hilpinen
   * @since 13.7.2019, v0.1+
   */
-case class Field(id: Option[Int] = None, serviceId: Option[Int], fieldId: Option[Int] = None) extends
+case class Field(id: Option[Int] = None, serviceId: Option[Int], graniteId: Option[Int] = None) extends
 	StorableWithFactory[granite.model.Field]
 {
 	override def factory = Field
 	
-	override def valueProperties = Vector("id" -> id, "serviceId" -> serviceId, "fieldId" -> fieldId)
+	override def valueProperties = Vector("id" -> id, "service" -> serviceId, "graniteId" -> graniteId)
 }

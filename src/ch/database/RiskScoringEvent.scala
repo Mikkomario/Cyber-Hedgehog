@@ -6,6 +6,7 @@ import utopia.flow.generic.ValueConversions._
 import ch.model.scoring
 import utopia.vault.database.Connection
 import utopia.vault.model.immutable.access.SingleAccess
+import utopia.vault.sql.{MaxBy, Select, Where}
 
 /**
  * Used for accessing individual risk scoring event items
@@ -20,7 +21,7 @@ object RiskScoringEvent extends SingleAccess[Int, scoring.RiskScoringEvent]
 	 * @param connection Database connection (implicit)
 	 * @return The latest risk scoring event
 	 */
-	def last(implicit connection: Connection) = factory.getMax("created")
+	def latest(implicit connection: Connection) = factory.getMax("created")
 	
 	
 	// IMPLEMENTED	---------------------
@@ -31,6 +32,17 @@ object RiskScoringEvent extends SingleAccess[Int, scoring.RiskScoringEvent]
 	
 	
 	// OTHER	-------------------------
+	
+	/**
+	 * @param typeId Id of analyzed entity type
+	 * @param connection DB Connection
+	 * @return Latest risk scoring event for the specified entity type
+	 */
+	def latestForEntityTypeWithId(typeId: Int)(implicit connection: Connection) =
+	{
+		connection(Select(table join Algorithm.table, table) +
+			Where(model.Algorithm.withTargetTypeId(typeId).toCondition) + MaxBy(table("created"))).parseSingle(factory)
+	}
 	
 	/**
 	 * Inserts a new risk scoring event to DB

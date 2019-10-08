@@ -7,7 +7,9 @@ package ch.model
   * @param id This contact's unique identifier
   * @param assignments This contact's assignments across various companies
   * @param sourceId Id of this contact's origin source
+ *  @deprecated Contact classes will be replaced with entity classes
   */
+@deprecated("Replaced with Entity", "v2")
 case class Contact(id: Int, assignments: Vector[ContactAssignment], sourceId: Int)
 {
 	// COMPUTED	----------------

@@ -10,6 +10,7 @@ import utopia.vault.model.immutable.factory.FromRowFactory
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with FieldLabelMapping and OptionLabelMapping", "v2")
 trait LabelMappingFactory[+M] extends FromRowFactory[PartialLabelMapping]
 {
 	// ABSTRACT	-----------------

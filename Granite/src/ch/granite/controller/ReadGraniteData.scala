@@ -7,7 +7,7 @@ import utopia.flow.util.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
 import ch.database.{Company, ConnectionPool}
 import ch.granite.database.{Fields, Mappings}
-import ch.granite.model.{ContactRoleMapping, LabelMapping}
+import ch.granite.model.{ContactRoleMapping, LabelMappingOld}
 import ch.granite.util.GraniteSettings
 import ch.model.exception.InvalidSettingsException
 import ch.util.Log
@@ -160,8 +160,8 @@ object ReadGraniteData
 		}
 	}
 	
-	private def readResponse(responseId: Int, user: String, password: String, companyMappings: Seq[LabelMapping],
-							 contactMappings: Seq[LabelMapping], roleMappings: Seq[ContactRoleMapping])
+	private def readResponse(responseId: Int, user: String, password: String, companyMappings: Seq[LabelMappingOld],
+							 contactMappings: Seq[LabelMappingOld], roleMappings: Seq[ContactRoleMapping])
 							(implicit executionContext: ExecutionContext, connection: Connection) =
 	{
 		// Requests response data from server

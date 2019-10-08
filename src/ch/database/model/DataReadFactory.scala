@@ -11,6 +11,7 @@ import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
   * @author Mikko Hilpinen
   * @since 20.7.2019, v0.1+
   */
+@deprecated("Replaced with new version of DataRead", "v2")
 trait DataReadFactory[+M] extends StorableFactoryWithValidation[ch.model.DataRead]
 {
 	// ABSTRACT	----------------------

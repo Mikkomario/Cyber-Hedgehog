@@ -4,6 +4,7 @@ import utopia.flow.generic.ValueConversions._
 import ch.database.Tables
 import utopia.vault.model.immutable.Storable
 
+@deprecated("Replaced with Entity", "v2")
 object Company
 {
 	/**
@@ -25,6 +26,7 @@ object Company
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with Entity", "v2")
 case class Company(id: Option[Int] = None, sourceId: Option[Int] = None) extends Storable
 {
 	override def table = Tables.company

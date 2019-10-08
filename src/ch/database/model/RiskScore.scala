@@ -15,7 +15,7 @@ object RiskScore extends LinkedStorableFactory[scoring.RiskScore, scoring.RiskSc
 	
 	override def apply(model: Model[Constant], child: scoring.RiskScoringEvent) =
 		table.requirementDeclaration.validate(model).toTry.map { valid => scoring.RiskScore(valid("id").getInt,
-			valid("company").getInt, valid("score").getDouble, child) }
+			valid("target").getInt, valid("score").getDouble, child) }
 	
 	override def table = Tables.riskScore
 	
@@ -24,12 +24,12 @@ object RiskScore extends LinkedStorableFactory[scoring.RiskScore, scoring.RiskSc
 	
 	/**
 	 * Creates a new model ready to be inserted to DB
-	 * @param companyId Id of scored company
+	 * @param targetId Id of scored company
 	 * @param score Score for company
 	 * @param eventId Id of associated scoring event
 	 * @return A new model
 	 */
-	def forInsert(companyId: Int, score: Double, eventId: Int) = RiskScore(None, Some(companyId), Some(score), Some(eventId))
+	def forInsert(targetId: Int, score: Double, eventId: Int) = RiskScore(None, Some(targetId), Some(score), Some(eventId))
 }
 
 /**
@@ -37,11 +37,11 @@ object RiskScore extends LinkedStorableFactory[scoring.RiskScore, scoring.RiskSc
  * @author Mikko Hilpinen
  * @since 24.8.2019, v1.1+
  */
-case class RiskScore(id: Option[Int] = None, companyId: Option[Int] = None, score: Option[Double] = None,
+case class RiskScore(id: Option[Int] = None, targetId: Option[Int] = None, score: Option[Double] = None,
 					 eventId: Option[Int] = None) extends StorableWithFactory[scoring.RiskScore]
 {
 	override def factory = RiskScore
 	
-	override def valueProperties = Vector("id" -> id, "company" -> companyId, "score" -> score,
+	override def valueProperties = Vector("id" -> id, "target" -> targetId, "score" -> score,
 		"event" -> eventId)
 }

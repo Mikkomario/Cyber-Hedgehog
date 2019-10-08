@@ -3,6 +3,7 @@ package ch.database.model
 import ch.database.Tables
 import utopia.flow.datastructure.immutable.Value
 
+@deprecated("Replaced with EntityData", "v2")
 object ContactData extends DataFactory[ContactData]
 {
 	// IMPLEMENTED	----------------------
@@ -19,6 +20,7 @@ object ContactData extends DataFactory[ContactData]
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with EntityData", "v2")
 case class ContactData(id: Option[Int] = None, readId: Option[Int], labelId: Option[Int] = None,
 					   value: Option[Value] = None) extends Data[ContactData]
 {

@@ -8,6 +8,7 @@ package ch.granite.model
   * @param option The option value being mapped
   * @param roleId Id of the role being mapped
   */
+@deprecated("Replaced with LinkTypeMapping", "v2")
 case class ContactRoleMapping(id: Int, option: SelectOption, roleId: Int)
 {
 	/**
@@ -17,8 +18,8 @@ case class ContactRoleMapping(id: Int, option: SelectOption, roleId: Int)
 	  */
 	def apply(result: QueryResult) =
 	{
-		val fieldId = option.field.graniteFieldId
-		val optionId = option.optionId
+		val fieldId = option.field.graniteId
+		val optionId = option.graniteId
 		
 		if (result.dropDownIds.contains(fieldId))
 			Some(result.dropDownIds(fieldId).contains(optionId))

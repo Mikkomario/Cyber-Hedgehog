@@ -13,7 +13,7 @@ import utopia.vault.sql.{ConditionElement, Delete, Select, Where}
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
-// TODO: Refactor once there is only one target table left
+@deprecated("Replaced with Entity", "v2")
 object Contact extends DataInterface[model.ContactData, ContactDataRead, ContactDataLabel]
 {
 	// COMPUTED	------------------------
@@ -45,6 +45,7 @@ object Contact extends DataInterface[model.ContactData, ContactDataRead, Contact
 	  * @param connection DB connection
 	  * @return New contact's id
 	  */
+	@deprecated("Replaced with Entity.insert(...)", "v2")
 	def insert(sourceId: Int)(implicit connection: Connection) = model.Contact.forInsert(sourceId).insert().getInt
 	
 	/**
@@ -53,6 +54,7 @@ object Contact extends DataInterface[model.ContactData, ContactDataRead, Contact
 	  * @param connection DB connection
 	  * @return Contact data from DB. None if id didn't match any contact
 	  */
+	@deprecated("Replaced with Entity.withId(id)", "v2")
 	def withId(contactId: Int)(implicit connection: Connection) = model.Contact.getMany(contactIndex <=> contactId).headOption
 	
 	/**
@@ -64,6 +66,7 @@ object Contact extends DataInterface[model.ContactData, ContactDataRead, Contact
 	  * @param created Data creation time (default = current instant)
 	  * @param connection DB connection
 	  */
+	@deprecated("Replaced with Entity.link.addBetween(...)", "v2")
 	def addRolesForContact(contactId: Int, companyId: Int, newRoleIds: Traversable[Int], sourceId: Int,
 						   created: Instant = Instant.now())(implicit connection: Connection) =
 	{
@@ -78,6 +81,7 @@ object Contact extends DataInterface[model.ContactData, ContactDataRead, Contact
 	  * @param oldRoleIds The roles that should be removed from contact in company
 	  * @param connection DB connection
 	  */
+	@deprecated("Replaced with Entity.link.removeBetween(...)", "v2")
 	def removeRolesFromContact(contactId: Int, companyId: Int, oldRoleIds: Seq[Int])
 							  (implicit connection: Connection): Unit =
 	{
@@ -98,6 +102,7 @@ object Contact extends DataInterface[model.ContactData, ContactDataRead, Contact
 	  * @param connection DB Connection
 	  * @return Set that contains ids of all found contacts
 	  */
+	@deprecated("Replaced with Entities.withinOther(...)", "v2")
 	def contactsWithin(companyIds: Set[Int], addedAfter: Option[Instant] = None)(implicit connection: Connection) =
 	{
 		if (companyIds.nonEmpty)

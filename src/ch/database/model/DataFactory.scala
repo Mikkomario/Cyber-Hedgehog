@@ -12,6 +12,7 @@ import utopia.vault.model.immutable.factory.FromRowFactory
   * @author Mikko Hilpinen
   * @since 20.7.2019, v0.1+
   */
+@deprecated("Replaced with EntityData", "v2")
 trait DataFactory[+M] extends FromRowFactory[ch.model.Data]
 {
 	// ABSTRACT	-------------------

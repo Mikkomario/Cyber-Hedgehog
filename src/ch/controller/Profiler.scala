@@ -4,37 +4,42 @@ import java.time.Instant
 
 import utopia.flow.util.CollectionExtensions._
 import utopia.flow.util.TimeExtensions._
-import ch.database.{Company, Profiling}
+import ch.database.{Entities, Entity, Profiling}
 import ch.model.{DataRead, DataSet}
 import ch.model.profiling.condition.PartialSegmentFilter
 import ch.model.profiling.ProfilingEvent
 import utopia.vault.database.Connection
+import ch.database
 
 /**
-  * Searches through company data and assigns companies to different segments based on a filter logic
+  * Searches through entity data and assigns entities to different segments based on a filter logic
   * @author Mikko Hilpinen
   * @since 19.7.2019, v0.1+
   */
 object Profiler
 {
 	/**
-	  * Performs a profiling based on new data in the database (new company data or new segment filtering)
+	  * Performs a profiling based on new data in the database (new entity data or new segment filtering)
 	  * @param connection DB connection
 	  */
 	def run()(implicit connection: Connection): Unit =
 	{
-		val allCompanyIds = Company.allIds
-		val allSegmentIds = Profiling.segments.ids.all
-		
-		// println(s"Matching companies [${allCompanyIds.mkString(", ")}] against segments [${allSegmentIds.mkString(", ")}]")
-		
-		// Performs a profiling for each segment available (caches company data between segments)
-		allSegmentIds.foldLeft(Map[Int, CompanyReadData]()) { (cached, segmentId) =>
-			profileSegment(segmentId, allCompanyIds, cached) }
+		// Handles each entity type separately
+		Entity.typeIds.foreach { typeId =>
+			
+			val allTargetIds = Entities.ids.forTypeWithId(typeId)
+			val allSegmentIds = Profiling.segments.ids.forContentTypeWithId(typeId)
+			
+			// println(s"Matching targets [${allTargetIds.mkString(", ")}] against segments [${allSegmentIds.mkString(", ")}]")
+			
+			// Performs a profiling for each segment available (caches entity data between segments)
+			allSegmentIds.foldLeft(Map[Int, ReadData]()) { (cached, segmentId) =>
+				profileSegment(segmentId, allTargetIds, cached) }
+		}
 	}
 	
-	private def profileSegment(segmentId: Int, allCompanyIds: Traversable[Int],
-							   cachedCompanyData: Map[Int, CompanyReadData])(implicit connection: Connection) =
+	private def profileSegment(segmentId: Int, allTargetIds: Traversable[Int],
+							   cachedData: Map[Int, ReadData])(implicit connection: Connection) =
 	{
 		// Won't perform any profiling without filter data
 		Profiling.segment(segmentId).latestPartialFilter.map { partialFilter =>
@@ -44,30 +49,30 @@ object Profiler
 			// println(s"Using filter ${partialFilter.id}. Last profiling was made: ${
 			//	lastProfiling.map { _.time.toString }.getOrElse("Never")}")
 			
-			// If filter was changed since last profiling, or if there hasn't been any profiling yet, updates data for all companies
+			// If filter was changed since last profiling, or if there hasn't been any profiling yet, updates data
+			// for all target entities
 			if (lastProfiling.forall { _.filterId != partialFilter.id })
-				reprofile(segmentId, allCompanyIds, cachedCompanyData, partialFilter)
-			// Otherwise only updates companies which were updated after last profiling
+				reprofile(segmentId, allTargetIds, cachedData, partialFilter)
+			// Otherwise only updates entities which were updated after last profiling
 			else
-				update(lastProfiling.get, allCompanyIds, cachedCompanyData, partialFilter)
+				update(lastProfiling.get, allTargetIds, cachedData, partialFilter)
 			
-		}.getOrElse(cachedCompanyData)
+		}.getOrElse(cachedData)
 	}
 	
-	private def update(lastProfiling: ProfilingEvent, allCompanyIds: Traversable[Int],
-					   cachedCompanyData: Map[Int, CompanyReadData], partialFilter: PartialSegmentFilter)
-					  (implicit connection: Connection) =
+	private def update(lastProfiling: ProfilingEvent, allTargetIds: Traversable[Int], cachedData: Map[Int, ReadData],
+					   partialFilter: PartialSegmentFilter)(implicit connection: Connection) =
 	{
 		// println("Updating last profiling")
 		
-		// Finds out all companies which had their data updated after the last profiling event
-		val missingReads = allCompanyIds.filterNot { cachedCompanyData.contains }.flatMap {
-			dataForCompany(_, Some(lastProfiling.time)) }
-		val cachedUpdates = cachedCompanyData.filter { _._2.lastRead.readTime > lastProfiling.time }
+		// Finds out all entities which had their data updated after the last profiling event
+		val missingReads = allTargetIds.filterNot { cachedData.contains }.flatMap {
+			dataForEntity(_, Some(lastProfiling.time)) }
+		val cachedUpdates = cachedData.filter { _._2.lastRead.readTime > lastProfiling.time }
 		val updates = missingReads ++ cachedUpdates
 		
-		// Filters company data and finds out which of the updated companies belong to segment
-		// (only some of the companies were updated)
+		// Filters target data and finds out which of the updated targets belong to segment
+		// (only some of the entities were updated)
 		if (updates.nonEmpty)
 		{
 			val filter = Profiling.complete(partialFilter)
@@ -75,51 +80,54 @@ object Profiler
 			val notBelongsIds = notBelongs.map { _._1 }.toSet
 			val belongsIds = belongs.map { _._1 }.toSet
 			
-			// Copies last profiling results, but may remove some companies and add others
-			val oldCompanyIds = Profiling(lastProfiling.id).companyIds.toSet
-			val newCompanyIds = oldCompanyIds -- notBelongsIds ++ belongsIds
+			// Copies last profiling results, but may remove some entities and add others
+			val oldTargetIds = Profiling(lastProfiling.id).contentIds.toSet
+			val newTargetIds = oldTargetIds -- notBelongsIds ++ belongsIds
 			
 			// Saves the new profiling to the database
-			Profiling.insert(lastProfiling.segmentId, filter.id, newCompanyIds)
+			Profiling.insert(lastProfiling.segmentId, filter.id, newTargetIds)
 		}
 		
 		// Returns updated cached data
-		cachedCompanyData ++ missingReads
+		cachedData ++ missingReads
 	}
 	
-	private def reprofile(segmentId: Int, allCompanyIds: Traversable[Int], cachedCompanyData: Map[Int, CompanyReadData],
+	private def reprofile(segmentId: Int, allTargetIds: Traversable[Int], cachedData: Map[Int, ReadData],
 						  partialFilter: PartialSegmentFilter)(implicit connection: Connection) =
 	{
 		// println("Creating a completely new profiling")
 		
-		// Finds all missing company data
-		val companyData = allCompanyIds.flatMap { companyId =>
+		// Finds all missing entity data
+		val data = allTargetIds.flatMap { targetId =>
 			
-			if (cachedCompanyData.contains(companyId))
-				Some(companyId -> cachedCompanyData(companyId))
+			if (cachedData.contains(targetId))
+				Some(targetId -> cachedData(targetId))
 			else
-				dataForCompany(companyId)
+				dataForEntity(targetId)
 		}
 		
-		// println(s"Using company data: \n${companyData.map { case (id, data) => s"$id: ${data.readData}" }.mkString("\n")}")
+		// println(s"Using entity data: \n${data.map { case (id, data) => s"$id: ${data.readData}" }.mkString("\n")}")
 		
-		// Completes the filter and applies it to all companies
+		// Completes the filter and applies it to all targets
 		val filter = Profiling.complete(partialFilter)
-		val newSegmentCompanyIds = companyData.filter { case (_, data) => filter(data.readData) }.map { _._1 }.toSet
+		val newSegmentTargetIds = data.filter { case (_, data) => filter(data.readData) }.map { _._1 }.toSet
 		
 		// println(s"Used filter: $filter")
-		// println(s"Companies that were accepted by filter: [${newSegmentCompanyIds.mkString(",")}]")
+		// println(s"Entities that were accepted by filter: [${newSegmentTargetIds.mkString(",")}]")
 		
 		// Saves a new profiling to the database
-		Profiling.insert(segmentId, filter.id, newSegmentCompanyIds)
+		Profiling.insert(segmentId, filter.id, newSegmentTargetIds)
 		
 		// Returns new cached data
-		companyData.toMap
+		data.toMap
 	}
 	
-	private def dataForCompany(companyId: Int, after: Option[Instant] = None)(implicit connection: Connection) =
-		Company.lastReadForTargetId(companyId, after).map { read =>
-			companyId -> CompanyReadData(read, Company.readData(read.id)) }
+	private def dataForEntity(entityId: Int, after: Option[Instant] = None)(implicit connection: Connection) =
+	{
+		val accessPoint = Entity(entityId)
+		val read = after.map(accessPoint.latestReadAfter).getOrElse(accessPoint.latestRead)
+		read.map { r => entityId -> ReadData(r, database.DataRead(r.id).data) }
+	}
 }
 
-private case class CompanyReadData(lastRead: DataRead, readData: DataSet)
+private case class ReadData(lastRead: DataRead, readData: DataSet)

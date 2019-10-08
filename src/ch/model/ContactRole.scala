@@ -7,6 +7,7 @@ package ch.model
   * @param id This role's unique identifier
   * @param isInsideCompany Whether this role is inside (true) or outside (false) targeted company
   */
+@deprecated("Replaced with EntityLinkType", "2+")
 case class ContactRole(id: Int, isInsideCompany: Boolean)
 {
 	override def toString = s"role $id (${if (isInsideCompany) "inside" else "outside"})"

@@ -1,8 +1,9 @@
 package ch.granite.controller
 
 import utopia.flow.util.CollectionExtensions._
-import ch.database.{Company, Contact}
-import ch.granite.model.{ContactRoleMapping, Granite, LabelMapping, QueryResult}
+import ch.database.{Company, Contact, DataRead, Entities, Entity, EntityTypes}
+import ch.granite.model.{ContactRoleMapping, FieldLabelMapping, Granite, LabelMapping, LabelMappingOld, LinkTypeMapping, OptionLabelMapping, QueryResult}
+import ch.model.DataSet
 import ch.util.Log
 import utopia.vault.database.Connection
 
@@ -13,13 +14,67 @@ import utopia.vault.database.Connection
   */
 object ResultHandler
 {
+	def apply2(result: QueryResult, mappings: Traversable[LabelMapping],
+			   linkTypeMappings: Traversable[LinkTypeMapping])(implicit connection: Connection) =
+	{
+		// First reads and saves data for each supported entity type, saves results (type id -> entity id)
+		val readEntities = EntityTypes.ids.all.flatMap { typeId =>
+			
+			// Starts by finding correct mappings and reading provided identifier values (empty values not included)
+			val (regularMappings, identifierMappings) = mappings.filter { _.label.targetEntityTypeId == typeId }
+				.divideBy { _.label.isIdentifier }
+			val identifierData = readValues(result, mappings)
+			
+			// Only continues if identifier data was found
+			if (identifierData.nonEmpty)
+			{
+				// Checks whether there already exists data for an entity with those identifiers
+				val existingTargetId = identifierData.data.findMap { case (label, idValue) =>
+					Entity.id.forIdentifier(label.id, idValue) }
+				
+				// If no existing company was found, creates a new one
+				val targetId = existingTargetId getOrElse Entity.insert(typeId, Granite.id).id
+				
+				// Creates a company data read event
+				val dataRead = DataRead.insert(Granite.id, targetId, result.dataOriginTime)
+				
+				// Finds non-identifier values
+				val regularData = readValues(result, regularMappings)
+				
+				// Pushes all read data to DB
+				val allData = identifierData ++ regularData
+				Entities.data.insert(dataRead.id, allData.data.map { case (label, value) => label.id -> value })
+				
+				Some(typeId -> targetId)
+			}
+			else
+				None
+		}.toMap
+		
+		// Finishes by linking read data together using link type mappings
+		// TODO: Continue
+	}
+	
+	private def readValues(result: QueryResult, mappings: Traversable[LabelMapping]) =
+	{
+		val mapped = mappings.map { mapping => mapping.label -> mapping(result) }
+		val (success, failed) = mapped.divideBy { _._2.isEmpty }
+		
+		// If some of the labels couldn't be mapped, logs a warning
+		if (failed.nonEmpty)
+			Log.warning(s"Failed to map some of the granite results (${failed.map { _._1.id }.mkString(", ")}) for $result")
+		
+		// Will not include empty values in the results, however
+		DataSet(success.map { case (label, value) => label -> value.get }.filter { _._2.isDefined }.toSet)
+	}
+	
 	/**
 	  * Handles the result read from Granite API, saving new data to DB
 	  * @param result The read result
 	  * @return Operation result (may contain failure)
 	  */
-	def apply(result: QueryResult, companyLabelMappings: Traversable[LabelMapping],
-			  contactLabelMappings: Traversable[LabelMapping], contactRoleMappings: Traversable[ContactRoleMapping])
+	def apply(result: QueryResult, companyLabelMappings: Traversable[LabelMappingOld],
+			  contactLabelMappings: Traversable[LabelMappingOld], contactRoleMappings: Traversable[ContactRoleMapping])
 			 (implicit connection: Connection) =
 	{
 		val sourceId = Granite.id
@@ -95,7 +150,7 @@ object ResultHandler
 		}
 	}
 	
-	private def mapValues(result: QueryResult, mappings: Traversable[LabelMapping]) =
+	private def mapValues(result: QueryResult, mappings: Traversable[LabelMappingOld]) =
 	{
 		val mapped = mappings.map { mapping => mapping.label -> mapping(result) }
 		val (success, failed) = mapped.divideBy { _._2.isEmpty }

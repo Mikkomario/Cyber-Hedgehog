@@ -5,6 +5,7 @@ import ch.database.Tables
 import utopia.vault.model.immutable.factory.FromResultFactory
 import utopia.vault.model.immutable.{Result, Storable}
 
+@deprecated("Replaced with Entity", "v2")
 object Contact extends FromResultFactory[ch.model.Contact]
 {
 	// IMPLEMENTED	-----------------
@@ -57,6 +58,7 @@ object Contact extends FromResultFactory[ch.model.Contact]
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with Entity", "v2")
 case class Contact(id: Option[Int] = None, sourceId: Option[Int] = None) extends Storable
 {
 	override def table = Contact.table

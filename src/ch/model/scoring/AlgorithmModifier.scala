@@ -1,6 +1,6 @@
 package ch.model.scoring
 
-import ch.model.{CompanyDataLabelGroup, DataSet}
+import ch.model.{EntityLabelGroup, DataSet}
 
 /**
  * Represents a single parameter in cyber risk score algorithm
@@ -14,7 +14,7 @@ import ch.model.{CompanyDataLabelGroup, DataSet}
  * @param backupResult Result provided when function fails or data is not available
  * @param backupImportance Importance of result when backup result is used
  */
-case class AlgorithmModifier(id: Int, algorithmId: Int, source: Either[Int, CompanyDataLabelGroup],
+case class AlgorithmModifier(id: Int, algorithmId: Int, source: Either[Int, EntityLabelGroup],
 							 function: RiskFunction, importance: Int, backupResult: Double, backupImportance: Int)
 {
 	/**

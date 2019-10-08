@@ -9,6 +9,7 @@ import utopia.vault.model.immutable.StorableWithFactory
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with FieldLabelMapping and OptionLabelMapping", "v2")
 trait LabelMapping extends StorableWithFactory[PartialLabelMapping]
 {
 	/**

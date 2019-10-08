@@ -14,13 +14,19 @@ object AlgorithmIdAccess extends SingleIdAccess[Int]
 	 * @param connection DB connection (implicit)
 	 * @return The id of the latest algorithm version
 	 */
-	def last(implicit connection: Connection) = max("created")
+	def latest(implicit connection: Connection) = max("created")
 	
 	
 	// IMPLEMENTED	---------------------
 	
 	override def table = Tables.riskAlgorithm
 	override protected def valueToId(value: Value) = value.getInt
+	
+	
+	// OTHER	-------------------------
+	
+	def ofLatestVersionForTypeWithId(typeId: Int)(implicit connection: Connection) =
+		max(model.Algorithm.withTargetTypeId(typeId).toCondition, "created")
 }
 
 /**

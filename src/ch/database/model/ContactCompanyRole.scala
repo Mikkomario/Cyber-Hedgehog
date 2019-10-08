@@ -8,6 +8,7 @@ import ch.model.ContactAssignment
 import utopia.vault.model.immutable.factory.FromRowFactory
 import utopia.vault.model.immutable.{Row, StorableWithFactory}
 
+@deprecated("Replaced with EntityLink", "v2")
 object ContactCompanyRole extends FromRowFactory[ContactAssignment]
 {
 	// IMPLEMENTED	-------------------
@@ -64,6 +65,7 @@ object ContactCompanyRole extends FromRowFactory[ContactAssignment]
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with EntityLink", "v2")
 case class ContactCompanyRole(id: Option[Int] = None, contactId: Option[Int] = None, companyId: Option[Int] = None,
 							  roleId: Option[Int] = None, sourceId: Option[Int] = None, created: Option[Instant] = None)
 	extends StorableWithFactory[ContactAssignment]

@@ -12,6 +12,7 @@ import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with EntityLinkType", "v2")
 object ContactRole extends StorableFactoryWithValidation[ch.model.ContactRole]
 {
 	// IMPLEMENTED	-------------------
@@ -30,6 +31,7 @@ object ContactRole extends StorableFactoryWithValidation[ch.model.ContactRole]
 	def insideCompany = ContactRole(isInsideCompany = Some(true))
 }
 
+@deprecated("Replaced with EntityLinkType", "v2")
 case class ContactRole(id: Option[Int] = None, isInsideCompany: Option[Boolean] = None)
 	extends StorableWithFactory[ch.model.ContactRole]
 {

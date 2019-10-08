@@ -9,6 +9,7 @@ import utopia.vault.model.immutable.StorableWithFactory
   * @author Mikko Hilpinen
   * @since 20.7.2019, v0.1+
   */
+@deprecated("Replaced with EntityData", "v2")
 trait Data[Repr] extends StorableWithFactory[ch.model.Data]
 {
 	// ABSTRACT	--------------------

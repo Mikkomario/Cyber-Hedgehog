@@ -34,6 +34,7 @@ object Fields extends ManyAccess[Int, ch.granite.model.Field]
 	  * Returns all unique service ids's recorded in DB
 	  * @param connection DB connection
 	  */
+	@deprecated("Replaced with Service.ids.all", "v2")
 	def serviceIds(implicit connection: Connection) = SelectDistinct(model.Field.table, "serviceId")
 		.execute().rows.flatMap { _.value.int }
 	
@@ -42,6 +43,7 @@ object Fields extends ManyAccess[Int, ch.granite.model.Field]
 	  * @param connection DB connection
 	  * @return All fields for that service
 	  */
+	@deprecated("Replaced with Services(id).fields", "v2")
 	def forService(serviceId: Int)(implicit connection: Connection) =
 		model.Field.getMany(serviceIdCondition(serviceId))
 	
@@ -50,7 +52,7 @@ object Fields extends ManyAccess[Int, ch.granite.model.Field]
 	  * @param connection DB connection
 	  * @return All select options for that service
 	  */
-	@deprecated("Replaced with options.forService(<serviceId>)", "v1.1")
+	@deprecated("Replaced with Services(id).options", "v2")
 	def optionsForService(serviceId: Int)(implicit connection: Connection) =
 		SelectOption.getMany(serviceIdCondition(serviceId))
 	
@@ -75,6 +77,7 @@ object Fields extends ManyAccess[Int, ch.granite.model.Field]
 		  * @param connection DB connection
 		  * @return All select options for that service
 		  */
+		@deprecated("Replaced with Services(id).options", "v2")
 		def forService(serviceId: Int)(implicit connection: Connection) = find(serviceIdCondition(serviceId))
 	}
 }

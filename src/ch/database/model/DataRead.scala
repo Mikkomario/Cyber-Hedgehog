@@ -2,47 +2,53 @@ package ch.database.model
 
 import java.time.Instant
 
-import utopia.flow.generic.ValueConversions._
+import ch.database.Tables
+import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
+import utopia.flow.generic.ValueConversions._
+import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+
+object DataRead extends StorableFactoryWithValidation[ch.model.DataRead]
+{
+	// IMPLEMENTED	----------------------
+	
+	override def table = Tables.dataRead
+	
+	override protected def fromValidatedModel(model: Model[Constant]) = ch.model.DataRead(model("id").getInt,
+		model("source").getInt, model("target").getInt, model("dataOriginTime").getInstant, model("created").getInstant)
+	
+	
+	// OTHER	--------------------------
+	
+	/**
+	 * Creates a new data read instance ready to be inserted to DB
+	 * @param sourceId Read source id
+	 * @param targetId Read target id
+	 * @param dataOriginTime Time when read data was originated / generated
+	 * @param readTime Data read time
+	 * @return A new read model ready to be inserted
+	 */
+	def forInsert(sourceId: Int, targetId: Int, dataOriginTime: Instant, readTime: Instant = Instant.now()) = apply(None,
+		Some(sourceId), Some(targetId), Some(dataOriginTime), Some(readTime))
+	
+	/**
+	 * @param targetId Targeted entity's id
+	 * @return A read with specified company id
+	 */
+	def withTargetId(targetId: Int) = apply(targetId = Some(targetId))
+}
 
 /**
-  * Common trait for data read db model implementations, which are used for interacting with data read DB data
-  * @author Mikko Hilpinen
-  * @since 20.7.2019, v0.1+
-  */
-trait DataRead extends StorableWithFactory[ch.model.DataRead]
+ * Used for interacting with data read DB data
+ * @author Mikko Hilpinen
+ * @since 5.10.2019, v2+
+ */
+case class DataRead(id: Option[Int] = None, sourceId: Option[Int] = None, targetId: Option[Int] = None,
+					dataOriginTime: Option[Instant] = None, created: Option[Instant] = None)
+	extends StorableWithFactory[ch.model.DataRead]
 {
-	// ABSTRACT	----------------
+	override def factory = DataRead
 	
-	/**
-	  * @return This read's unique id
-	  */
-	def id: Option[Int]
-	/**
-	  * @return Id of this read's origin source
-	  */
-	def sourceId: Option[Int]
-	/**
-	  * @return Id of this read's target
-	  */
-	def targetId: Option[Int]
-	/**
-	  * @return Time when data was originated
-	  */
-	def dataOriginTime: Option[Instant]
-	/**
-	  * @return Time when data was read
-	  */
-	def created: Option[Instant]
-	
-	/**
-	  * @return Name of "targetId" property in database
-	  */
-	def targetPropertyName: String
-	
-	
-	// IMPLEMENTED	-----------
-	
-	override def valueProperties = Vector("id" -> id, "source" -> sourceId, targetPropertyName -> targetId,
-		"dataOriginTime" -> dataOriginTime, "created" -> created)
+	override def valueProperties = Vector("id" -> id, "source" -> sourceId,
+		"target" -> targetId, "dataOriginTime" -> dataOriginTime, "created" -> created)
 }

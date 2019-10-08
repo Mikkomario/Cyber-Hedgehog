@@ -19,7 +19,7 @@ object AlgorithmModifier extends FromResultFactory[scoring.AlgorithmModifier]
 {
 	override def table = Tables.riskScoreModifier
 	
-	override def joinedTables = CompanyDataLabelGroup.tables
+	override def joinedTables = EntityLabelGroup.tables
 	
 	override def apply(result: Result) =
 	{
@@ -56,8 +56,9 @@ object AlgorithmModifier extends FromResultFactory[scoring.AlgorithmModifier]
 						// Case group id specified
 						else if (groupId.isDefined)
 						{
-							val groupModel = otherRows.get(CompanyDataLabelGroup.table).flatMap {
-								_.headOption.map { _(CompanyDataLabelGroup.table) }}
+							// Parses label group model, if one was provided
+							val groupModel = otherRows.get(EntityLabelGroup.table).flatMap {
+								_.headOption.map { _(EntityLabelGroup.table) }}
 							if (groupModel.isEmpty)
 							{
 								Log.warning(s"Failed to read data for associated company data label group with id ${groupId.get}")
@@ -65,9 +66,11 @@ object AlgorithmModifier extends FromResultFactory[scoring.AlgorithmModifier]
 							}
 							else
 							{
-								val labelLinks = otherRows.getOrElse(CompanyDataLabelGroupContent.table, Vector()).flatMap { linkRow =>
-									CompanyDataLabelGroupContent(linkRow) }
-								CompanyDataLabelGroup(groupId.get, groupModel.get, labelLinks) match
+								// Parses group connections from each connection row
+								val labelLinks = otherRows.getOrElse(EntityLabelGroupContent.table, Vector()).flatMap { linkRow =>
+									EntityLabelGroupContent(linkRow) }
+								// Parses group data into a completed model and uses it in algorithm model
+								EntityLabelGroup(groupId.get, groupModel.get, labelLinks) match
 								{
 									case Success(group) => Some(scoring.AlgorithmModifier(id.getInt, algorithmId,
 										Right(group), function.get, importance, backupResult, backupImportance))

@@ -12,6 +12,7 @@ import ch.util.Log
   * @param optionId The id of the select option associated with this mapping (None if field associated instead)
   * @param label The data label that is associated with this mapping
   */
+@deprecated("Replaced with FieldLabelMapping and OptionLabelMapping", "v2")
 case class PartialLabelMapping(id: Int, fieldId: Option[Int], optionId: Option[Int], label: DataLabel)
 {
 	/**
@@ -23,7 +24,7 @@ case class PartialLabelMapping(id: Int, fieldId: Option[Int], optionId: Option[I
 	{
 		if (!fieldId.contains(field.id))
 			Log.warning(s"Field $field doesn't match mapping's ($id) field id $fieldId")
-		LabelMapping(id, Right(field), label)
+		LabelMappingOld(id, Right(field), label)
 	}
 	
 	/**
@@ -35,7 +36,7 @@ case class PartialLabelMapping(id: Int, fieldId: Option[Int], optionId: Option[I
 	{
 		if (!optionId.contains(option.id))
 			Log.warning(s"SelectOption $option doesn't match mapping's ($id) option id $optionId")
-		LabelMapping(id, Left(option), label)
+		LabelMappingOld(id, Left(option), label)
 	}
 	
 	/**

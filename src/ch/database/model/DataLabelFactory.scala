@@ -15,6 +15,7 @@ import scala.util.{Failure, Success}
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with EntityLabel", "v2")
 trait DataLabelFactory[+M] extends StorableFactory[ch.model.DataLabel]
 {
 	// ABSTRACT	-------------------------

@@ -4,6 +4,7 @@ import java.time.Instant
 
 import ch.database.Tables
 
+@deprecated("Replaced with DataRead", "v2")
 object CompanyDataRead extends DataReadFactory[CompanyDataRead]
 {
 	// IMPLEMENTED	------------------
@@ -27,8 +28,9 @@ object CompanyDataRead extends DataReadFactory[CompanyDataRead]
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with DataRead", "v2")
 case class CompanyDataRead(id: Option[Int] = None, sourceId: Option[Int] = None, targetId: Option[Int] = None,
-						   dataOriginTime: Option[Instant] = None, created: Option[Instant] = None) extends DataRead
+						   dataOriginTime: Option[Instant] = None, created: Option[Instant] = None) extends DataReadOld
 {
 	override def factory = CompanyDataRead
 	

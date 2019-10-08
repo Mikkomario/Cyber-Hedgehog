@@ -2,7 +2,7 @@ package ch.database
 
 import utopia.flow.generic.ValueConversions._
 import utopia.flow.util.CollectionExtensions._
-import ch.database.model.{CompanySegmentConnection, SegmentFilter, SegmentFilterCondition, SegmentFilterConditionCombo}
+import ch.database.model.{SegmentContent, SegmentFilter, SegmentFilterCondition, SegmentFilterConditionCombo}
 import ch.model.profiling.condition.{PartialSegmentFilter, PartialSegmentFilterConditionCombo}
 import ch.model.profiling.{ProfilingEvent, ProfilingSegment}
 import ch.util.Log
@@ -11,12 +11,17 @@ import utopia.vault.model.immutable.access.{IntIdAccess, ItemAccess, ManyAccessW
 import utopia.vault.sql.{Select, Where}
 
 /**
-  * Used for interacting with company profiling DB data
+  * Used for interacting with entity profiling DB data
   * @author Mikko Hilpinen
   * @since 17.7.2019, v0.1+
   */
 object Profiling extends SingleAccess[Int, ProfilingEvent]
 {
+	// COMPUTED	-----------------------
+	
+	private def targetEntityColumn = table("includedEntity")
+	
+	
 	// IMPLEMENTED	-------------------
 	
 	override protected def idValue(id: Int) = id
@@ -99,32 +104,19 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 		segment(segmentId).latestPartialFilter.map(complete)
 	
 	/**
-	  * Finds ids for all companies that were associated with a segment in the specified profiling
-	  * @param profilingId Id of targeted profiling
-	  * @param connection DB connection
-	  */
-	@deprecated("Replaced with apply(<id>).companyIds", "v1.1")
-	def companyIdsForProfiling(profilingId: Int)(implicit connection: Connection) =
-	{
-		val table = Tables.companySegmentConnection
-		connection(Select(table, "company") + Where(CompanySegmentConnection.withProfilingId(profilingId).toCondition))
-			.rows.map { _.value }.flatMap { _.int }
-	}
-	
-	/**
 	  * Inserts a new profiling to DB
 	  * @param segmentId Target segment's id
 	  * @param filterId Used filter's id
-	  * @param segmentCompanyIds Ids of companies that now belong to the segment
+	  * @param segmentEntityIds Ids of entities that now belong to the target segment
 	  * @param connection DB connection
 	  */
-	def insert(segmentId: Int, filterId: Int, segmentCompanyIds: Set[Int])(implicit connection: Connection) =
+	def insert(segmentId: Int, filterId: Int, segmentEntityIds: Set[Int])(implicit connection: Connection) =
 	{
 		// Inserts the profiling first
 		val profilingId = model.Profiling.forInsert(segmentId, filterId).insert().getInt
 		
-		// Then connects the profiling with all specified companies
-		segmentCompanyIds.foreach { CompanySegmentConnection.forInsert(profilingId, _).insert() }
+		// Then connects the profiling with all specified targets
+		segmentEntityIds.foreach { SegmentContent.forInsert(profilingId, _).insert() }
 	}
 	
 	private def completeCondition(part: PartialSegmentFilterConditionCombo, visitedIds: Set[Int])
@@ -154,20 +146,32 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 	class SingleProfiling(id: Int) extends ItemAccess[ProfilingEvent](id, factory)
 	{
 		/**
-		  * Finds ids for all companies that were associated with a segment in this profiling
+		  * Finds ids for all entities that were associated with a segment in this profiling
 		  * @param connection DB connection
 		  */
-		def companyIds(implicit connection: Connection) =
+		def contentIds(implicit connection: Connection) =
 		{
-			connection(Select(Tables.companySegmentConnection, "company") +
-				Where(CompanySegmentConnection.withProfilingId(id).toCondition))
-				.rows.map { _.value }.flatMap { _.int }
+			connection(Select(Tables.segmentContent, targetEntityColumn) +
+				Where(SegmentContent.withProfilingId(id).toCondition)).rowIntValues
 		}
 	}
 	
 	object SegmentIds extends ManyIdAccess[Int] with IntIdAccess
 	{
+		// IMPLEMENTED	-------------------
+		
 		override def table = model.ProfilingSegment.table
+		
+		
+		// OTHER	-----------------------
+		
+		/**
+		 * @param typeId Id of targeted entity type
+		 * @param connection DB Connection
+		 * @return Ids of all segments that target the specified entity type
+		 */
+		def forContentTypeWithId(typeId: Int)(implicit connection: Connection) = apply(
+			model.ProfilingSegment.withContentTypeId(typeId).toCondition)
 	}
 	
 	object Segments extends ManyAccessWithIds[Int, ProfilingSegment, SegmentIds.type]

@@ -9,10 +9,11 @@ import ch.model.DataSet
  * @author Mikko Hilpinen
  * @since 24.8.2019, v1.1+
  * @param id The unique id of this algorithm version
+ * @param targetTypeId Id of entity type targeted by this risk scoring algorithm
  * @param created The time when this algorithm version was released
  * @param modifiers The modifiers that form this algorithm
  */
-case class Algorithm(id: Int, created: Instant, modifiers: Set[AlgorithmModifier])
+case class Algorithm(id: Int, targetTypeId: Int, created: Instant, modifiers: Set[AlgorithmModifier])
 {
 	/**
 	 * Calculates a risk score based on company data

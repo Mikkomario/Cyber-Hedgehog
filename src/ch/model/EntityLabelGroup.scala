@@ -7,4 +7,4 @@ package ch.model
  * @param id Unique id for this group
  * @param labelIds Ids of this group's labels in order
  */
-case class CompanyDataLabelGroup(id: Int, labelIds: Seq[Int])
+case class EntityLabelGroup(id: Int, labelIds: Seq[Int])

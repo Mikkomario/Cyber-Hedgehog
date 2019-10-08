@@ -8,6 +8,7 @@ package ch.granite.model
   * @param optionId Id of associated select option
   * @param roleId id of associated contact role
   */
+@deprecated("Replaced with LinkTypeMapping", "v2")
 case class PartialContactRoleMapping(id: Int, optionId: Int, roleId: Int)
 {
 	/**

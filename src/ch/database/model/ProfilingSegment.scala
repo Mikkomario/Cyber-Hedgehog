@@ -9,9 +9,21 @@ import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
 
 object ProfilingSegment extends StorableFactoryWithValidation[profiling.ProfilingSegment]
 {
-	override protected def fromValidatedModel(model: Model[Constant]) = profiling.ProfilingSegment(model("id").getInt)
+	// IMPLEMENTED	--------------------
+	
+	override protected def fromValidatedModel(model: Model[Constant]) = profiling.ProfilingSegment(model("id").getInt,
+		model("contentType").getInt)
 	
 	override def table = Tables.segment
+	
+	
+	// OTHER	------------------------
+	
+	/**
+	 * @param contentTypeId Id of targeted entity type
+	 * @return A model with content type id set
+	 */
+	def withContentTypeId(contentTypeId: Int) = ProfilingSegment(contentTypeId = Some(contentTypeId))
 }
 
 /**
@@ -19,9 +31,10 @@ object ProfilingSegment extends StorableFactoryWithValidation[profiling.Profilin
   * @author Mikko Hilpinen
   * @since 30.7.2019, v1.1+
   */
-case class ProfilingSegment(id: Option[Int] = None) extends StorableWithFactory[profiling.ProfilingSegment]
+case class ProfilingSegment(id: Option[Int] = None, contentTypeId: Option[Int] = None)
+	extends StorableWithFactory[profiling.ProfilingSegment]
 {
 	override def factory = ProfilingSegment
 	
-	override def valueProperties = Vector("id" -> id)
+	override def valueProperties = Vector("id" -> id, "contentType" -> contentTypeId)
 }

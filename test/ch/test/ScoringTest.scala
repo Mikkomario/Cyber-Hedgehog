@@ -4,7 +4,7 @@ import java.time.Instant
 
 import ch.model.DataType.BooleanType
 import ch.model.scoring.{Algorithm, AlgorithmModifier, RiskFunction}
-import ch.model.{CompanyDataLabelGroup, DataLabel, DataSet}
+import ch.model.{EntityLabelGroup, DataLabel, DataSet}
 import utopia.flow.datastructure.immutable.Value
 import utopia.flow.generic.DataType
 import utopia.flow.generic.ValueConversions._
@@ -106,7 +106,7 @@ object ScoringTest extends App
 	assert(missingResult._2 == 2)
 	
 	// Next tests average function
-	val averageMod = AlgorithmModifier(1, 1, Right(CompanyDataLabelGroup(1, Vector(6, 7, 8, 9, 10, 11))),
+	val averageMod = AlgorithmModifier(1, 1, Right(EntityLabelGroup(1, Vector(6, 7, 8, 9, 10, 11))),
 		RiskFunction.Average, 8, 0.25, 2)
 	
 	val perfectAvgResult = averageMod(perfectData)
@@ -147,7 +147,7 @@ object ScoringTest extends App
 	assert(partAvgResult2._2 == 8)
 	
 	// Next tests sequence function
-	val listMod = AlgorithmModifier(2, 1, Right(CompanyDataLabelGroup(1, Vector(31, 32))),
+	val listMod = AlgorithmModifier(2, 1, Right(EntityLabelGroup(1, Vector(31, 32))),
 		RiskFunction.Sequence, 13, 0.1, 3)
 	
 	assert(listMod(perfectData) == (1.0, 13))

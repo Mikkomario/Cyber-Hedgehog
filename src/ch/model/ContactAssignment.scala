@@ -12,7 +12,9 @@ import java.time.Instant
   * @param role Contact's role within the company
   * @param sourceId Id of the data source
   * @param since Time since contact relation was recorded
+ *  @deprecated Replaced with EntityLink
   */
+@deprecated("Replaced with EntityLink", "v2")
 case class ContactAssignment(id: Int, contactId: Int, companyId: Int, role: ContactRole, sourceId: Int, since: Instant)
 {
 	override def toString = s"$role company $companyId"

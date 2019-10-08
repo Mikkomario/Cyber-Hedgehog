@@ -8,7 +8,7 @@ import utopia.vault.database.Connection
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
-// TODO: Refactor once there is only one target table left
+@deprecated("Please use Entity instead", "v2")
 object Company extends DataInterface[model.CompanyData, CompanyDataRead, CompanyDataLabel]
 {
 	// IMPLEMENTED	--------------------
@@ -26,6 +26,7 @@ object Company extends DataInterface[model.CompanyData, CompanyDataRead, Company
 	  * @param connection DB connection
 	  * @return Ids for all recorded companies
 	  */
+	@deprecated("Replaced with Entities.ids.all", "v2")
 	def allIds(implicit connection: Connection) = Tables.company.allIndices.flatMap { _.int }
 	
 	/**
@@ -34,5 +35,6 @@ object Company extends DataInterface[model.CompanyData, CompanyDataRead, Company
 	  * @param connection DB connection
 	  * @return Newly added company id
 	  */
+	@deprecated("Replaced with Entity.insert(...)", "v2")
 	def insert(sourceId: Int)(implicit connection: Connection) = model.Company.forInsert(sourceId).insert().getInt
 }

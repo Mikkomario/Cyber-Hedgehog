@@ -8,6 +8,7 @@ import utopia.flow.generic.ValueConversions._
 import utopia.vault.model.immutable.StorableWithFactory
 import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
 
+@deprecated("Replaced with LinkTypeMapping", "v2")
 object ContactRoleMapping extends StorableFactoryWithValidation[PartialContactRoleMapping]
 {
 	// IMPLEMENTED	---------------------
@@ -23,6 +24,7 @@ object ContactRoleMapping extends StorableFactoryWithValidation[PartialContactRo
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
+@deprecated("Replaced with LinkTypeMapping", "v2")
 case class ContactRoleMapping(id: Option[Int] = None, optionFieldId: Option[Int] = None, roleId: Option[Int] = None)
 	extends StorableWithFactory[PartialContactRoleMapping]
 {

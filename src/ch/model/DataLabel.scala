@@ -5,8 +5,23 @@ package ch.model
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   * @param id This label's unique identifier
-  * @param dataType The data type for this label's values
-  * @param isIdentifier Whether this label's value is considered to be a company identifier (default = false)
-  * @param isEmail Whether this label's value represents an email address (default = false)
+ *  @param targetEntityTypeId Id of the entity type this label describes
+ *  @param currentConfiguration The current configuration of this label (optional)
   */
-case class DataLabel(id: Int, dataType: DataType, isIdentifier: Boolean = false, isEmail: Boolean = false)
+case class DataLabel(id: Int, targetEntityTypeId: Int, currentConfiguration: Option[DataLabelConfiguration])
+{
+	/**
+	 * @return The data type of this label's contents
+	 */
+	def dataType = currentConfiguration.map { _.dataType }.getOrElse { DataType.StringType }
+	
+	/**
+	 * @return Whether this label should be considered an identifier
+	 */
+	def isIdentifier = currentConfiguration.exists { _.isIdentifier }
+	
+	/**
+	 * @return Whether this label represents an email
+	 */
+	def isEmail = currentConfiguration.exists { _.isEmail }
+}

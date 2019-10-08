@@ -1,42 +1,24 @@
 package ch.granite.database.model
 
+import ch.granite.model
 import ch.granite.database.Tables
-import utopia.flow.datastructure.template.{Model, Property}
-import utopia.vault.model.immutable.Row
-import utopia.vault.model.immutable.factory.FromRowFactory
+import utopia.flow.datastructure.immutable.Model
+import utopia.flow.datastructure.immutable.Constant
+import utopia.vault.model.immutable.factory.LinkedStorableFactory
 
 /**
   * Used for reading & parsing granite selection option data from DB
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
-object SelectOption extends FromRowFactory[ch.granite.model.SelectOption]
+object SelectOption extends LinkedStorableFactory[model.SelectOption, model.Field]
 {
 	// IMPLEMENTED	------------------
 	
 	override def table = Tables.selectOption
 	
-	override def joinedTables = Vector(Field.table)
+	override def childFactory = Field
 	
-	override def apply(row: Row): Option[ch.granite.model.SelectOption] = Field(row).flatMap { apply(row(table), _) }
-	
-	
-	// OPERATORS	------------------
-	
-	/**
-	  * Parses an option in case where the field portion has already been parsed
-	  * @param optionModel A model that represents a select option
-	  * @param field Field associated with this option
-	  * @return A parsed select option
-	  */
-	def apply(optionModel: Model[Property], field: ch.granite.model.Field): Option[ch.granite.model.SelectOption] =
-	{
-		val id = optionModel("id").int
-		val optionId = optionModel("optionId").int
-		
-		if (id.isDefined && optionId.isDefined)
-			Some(ch.granite.model.SelectOption(id.get, field, optionId.get))
-		else
-			None
-	}
+	override def apply(model: Model[Constant], child: model.Field) = table.requirementDeclaration.validate(
+		model).toTry.map { valid => ch.granite.model.SelectOption(valid("id").getInt, child, valid("graniteId").getInt) }
 }
