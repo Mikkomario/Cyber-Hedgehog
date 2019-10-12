@@ -18,5 +18,8 @@ case class DataLabelConfiguration(id: Int, labelId: Int, dataType: DataType, isI
 								  isEmail: Boolean = false, created: Instant = Instant.now(),
 								  deprecatedSince: Option[Instant] = None)
 {
+	/**
+	 * @return Whether this data has been deprecated
+	 */
 	def isDeprecated = deprecatedSince.isDefined
 }

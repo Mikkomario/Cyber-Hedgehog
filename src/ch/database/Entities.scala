@@ -13,6 +13,12 @@ import utopia.vault.sql.{Condition, ConditionElement, Select, Update, Where}
 
 object EntityIds extends ManyIdAccess[Int] with IntIdAccess
 {
+	// COMPUTED	-----------------------
+	
+	private def readTable = model.DataRead.table
+	private def readTimeColumn = readTable("created")
+	
+	
 	// IMPLEMENTED	-------------------
 	
 	override def table = Tables.entity
@@ -25,8 +31,34 @@ object EntityIds extends ManyIdAccess[Int] with IntIdAccess
 	 * @param connection DB Connection
 	 * @return All entity ids for specified type
 	 */
-	def forTypeWithId(entityTypeId: Int)(implicit connection: Connection) = apply(model.Entity.withTypeId(
-		entityTypeId).toCondition)
+	def forTypeWithId(entityTypeId: Int)(implicit connection: Connection) = new EntityIdsOfType(entityTypeId)
+	
+	
+	// NESTED	-----------------------
+	
+	class EntityIdsOfType(val typeId: Int)
+	{
+		// COMPUTED	-------------------
+		
+		private def condition = model.Entity.withTypeId(typeId).toCondition
+		
+		/**
+		 * @param connection DB Connection
+		 * @return ids of entities of specified type
+		 */
+		def get(implicit connection: Connection) = apply(condition)
+		
+		
+		// OTHER	-------------------
+		
+		/**
+		 * @param threshold Time threshold
+		 * @param connection DB Connection
+		 * @return Ids for entities whose data has been updated since specified time threshold
+		 */
+		def updatedAfter(threshold: Instant)(implicit connection: Connection) = connection(
+			Select.index(table join readTable, table) + Where(readTimeColumn >= threshold)).rowIntValues.toSet
+	}
 }
 
 /**
@@ -193,6 +225,13 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 	
 	object Data extends ManyAccess[Int, ch.model.Data]
 	{
+		// COMPUTED	---------------------
+		
+		private def deprecatedColumn = table("deprecatedAfter")
+		
+		private def nonDeprecatedCondition = deprecatedColumn.isNull
+		
+		
 		// IMPLEMENTED	-----------------
 		
 		override protected def idValue(id: Int) = id
@@ -222,7 +261,15 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		 */
 		def insert(readId: Int, data: Traversable[(Int, Value)])(implicit connection: Connection) =
 		{
-			data.foreach { case(labelId, value) => factory.forInsert(readId, labelId, value).insert() }
+			// Will not insert empty values
+			val nonEmptyData = data.filter { _._2.isDefined }
+			
+			// Deprecates older versions of data and inserts the new version
+			nonEmptyData.foreach { case (labelId, value) =>
+				(model.EntityData.withDeprecatedAfter(Instant.now()).toUpdateStatement() +
+					Where(nonDeprecatedCondition && model.EntityData.withLabelId(labelId).toCondition)).execute()
+				model.EntityData.forInsert(readId, labelId, value).insert()
+			}
 		}
 	}
 	
@@ -278,7 +325,7 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		{
 			if (linkTypeIds.nonEmpty)
 			{
-				val update = Update(table, "deprecatedAfter", Instant.now()).get
+				val update = Update(table, "deprecatedAfter", Instant.now())
 				val targetRoleIds: Seq[ConditionElement] = linkTypeIds.map { id => id: ConditionElement }
 				connection(update + Where(
 					factory.withOriginId(originEntityId).withTargetId(targetEntityId).toCondition &&

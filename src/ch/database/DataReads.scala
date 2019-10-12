@@ -67,8 +67,10 @@ object DataReads extends ManyAccess[Int, ch.model.DataRead]
 	
 	private def timeThresholdCondition(threshold: Instant) = readTimeColumn > threshold
 	
+	// Groups by target & source, orders by data origin time
 	private def grouped(data: Traversable[ch.model.DataRead]) = data.groupBy { _.targetId }
-		.mapValues { _.maxBy { _.dataOriginTime } }.values
+		.mapValues { _.groupBy { _.sourceId }.mapValues { _.maxBy { _.dataOriginTime } }
+			.values.toVector.sortBy { _.dataOriginTime } }.values.toVector
 	
 	
 	// NESTED	--------------------

@@ -1,15 +1,3 @@
-import java.nio.file.Paths
-
-import utopia.flow.util.TimeExtensions._
-import utopia.flow.generic.ValueConversions._
-import ch.database.{Company, ConnectionPool}
-import ch.granite.controller.{QueryParser, ResultHandler}
-import ch.granite.database.{Fields, Mappings}
-import ch.util.ThreadPool
-import utopia.flow.generic.DataType
-import utopia.flow.parse.JSONReader
-
-import scala.concurrent.ExecutionContext
 
 /**
   * Completely handles a test result
@@ -18,6 +6,7 @@ import scala.concurrent.ExecutionContext
   */
 object ResultHandlingTest extends App
 {
+	/* This test doesn't yet support the new database structure
 	DataType.setup()
 	
 	val serviceId = 8
@@ -82,4 +71,5 @@ object ResultHandlingTest extends App
 	}
 	
 	println("Success!")
+	*/
 }

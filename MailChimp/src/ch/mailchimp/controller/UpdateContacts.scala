@@ -1,8 +1,9 @@
 package ch.mailchimp.controller
 
-import ch.database.{Company, Contact, DataRead, DataReads, Entity}
+import ch.database.{DataRead, DataReads, Entity}
 import ch.mailchimp.database.ContactUpdate
 import ch.mailchimp.model.{APIConfiguration, ContactList}
+import ch.model.DataSet
 import utopia.vault.database.Connection
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -24,7 +25,6 @@ object UpdateContacts
 	def apply()(implicit exc: ExecutionContext, connection: Connection, configuration: APIConfiguration): Vector[Future[Unit]] =
 	{
 		// Finds data for all contact lists and updates each
-		// TODO: create an access point for contact lists, perhaps?
 		ch.mailchimp.database.model.ContactList.getAll().flatMap { apply(_) }
 	}
 	
@@ -49,28 +49,31 @@ object UpdateContacts
 		
 		// println(s"Found ${updatedContactReads.size} new contact reads")
 		
-		val updates = updatedContactReads.flatMap { contactRead =>
+		val updates = updatedContactReads.flatMap { reads =>
 			
-			val contactData = DataRead(contactRead.id).data
-			// TODO: Find data for companies (and other entities) this contact works within
+			val contactId = reads.head.targetId
+			// Reads target entity data first
+			val contactData = reads.map { read => DataRead(read.id).data }.reduce { _ ++ _ }
 			
-			// Reads latest data for each contact and also finds data for the last company the contact worked within
-			Contact.withId(contactRead.targetId).flatMap { contact =>
+			if (contactData.nonEmpty)
+			{
+				// Then reads data of containing elements
+				val containingEntities = Entity(contactId).parentEntities
+				val otherData = containingEntities.reverse.map { e => Entity(e.id).latestData }
 				
-				val contactData = Contact.readData(contactRead.id)
+				// Combines all data together
+				val allData: DataSet = if (otherData.isEmpty) contactData else otherData.reduce { _ ++ _ } ++ contactData
 				
-				val companyId = contact.assignments.filter { _.role.isInsideCompany }.sortBy {
-					_.since }.headOption.map { _.companyId }
-				val companyData = companyId.flatMap { Company.lastReadForTargetId(_) }.map {
-					read => Company.readData(read.id) }
-				
-				// println(s"Sending data for contact ${contact.id} (of company $companyId)")
-				ContactsAPI.push(list, contactData, companyData)
+				// Pushes new data to MailChimp
+				ContactsAPI.push(list, allData)
 			}
+			else
+				None
 		}
 		
 		// Saves a new update event to DB (only if there was new contact data)
-		if (updates.nonEmpty) {
+		if (updates.nonEmpty)
+		{
 			// println("Recording new contact update event")
 			ContactUpdate.insertEvent(list.id)
 		}

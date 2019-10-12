@@ -1,12 +1,4 @@
 
-import ch.database
-import ch.database.{Company, ConnectionPool, Contact}
-import ch.granite.model.Granite
-import ch.util.ThreadPool
-import utopia.flow.generic.DataType
-
-import scala.concurrent.ExecutionContext
-
 /**
   * Tests contact DB functions
   * @author Mikko Hilpinen
@@ -14,6 +6,7 @@ import scala.concurrent.ExecutionContext
   */
 object ContactTest extends App
 {
+	/* This test doesn't yet support the new database structure
 	DataType.setup()
 	
 	val sourceId = Granite.id
@@ -63,4 +56,5 @@ object ContactTest extends App
 	}
 	
 	println("Success!")
+	*/
 }

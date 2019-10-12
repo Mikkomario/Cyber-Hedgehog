@@ -19,6 +19,6 @@ object SelectOption extends LinkedStorableFactory[model.SelectOption, model.Fiel
 	
 	override def childFactory = Field
 	
-	override def apply(model: Model[Constant], child: model.Field) = table.requirementDeclaration.validate(
+	override def apply(model: Model[Constant], child: ch.granite.model.Field) = table.requirementDeclaration.validate(
 		model).toTry.map { valid => ch.granite.model.SelectOption(valid("id").getInt, child, valid("graniteId").getInt) }
 }

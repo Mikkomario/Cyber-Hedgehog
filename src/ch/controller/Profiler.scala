@@ -27,7 +27,7 @@ object Profiler
 		// Handles each entity type separately
 		Entity.typeIds.foreach { typeId =>
 			
-			val allTargetIds = Entities.ids.forTypeWithId(typeId)
+			val allTargetIds = Entities.ids.forTypeWithId(typeId).get
 			val allSegmentIds = Profiling.segments.ids.forContentTypeWithId(typeId)
 			
 			// println(s"Matching targets [${allTargetIds.mkString(", ")}] against segments [${allSegmentIds.mkString(", ")}]")

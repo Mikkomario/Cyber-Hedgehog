@@ -15,7 +15,7 @@ object EntityLink extends LinkedStorableFactory[ch.model.EntityLink, ch.model.En
 	
 	override def childFactory = EntityLinkType
 	
-	override def apply(model: Model[Constant], child: model.EntityLinkType) = table.requirementDeclaration
+	override def apply(model: Model[Constant], child: ch.model.EntityLinkType) = table.requirementDeclaration
 		.validate(model).toTry.map { valid =>
 		ch.model.EntityLink(valid("id").getInt, valid("origin").getInt, valid("target").getInt, child,
 			valid("source").getInt, valid("created").getInstant, valid("deprecatedAfter").instant)

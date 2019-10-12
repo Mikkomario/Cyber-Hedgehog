@@ -1,7 +1,7 @@
 package ch.mailchimp.controller
 
 import utopia.flow.util.TimeExtensions._
-import ch.database.{Contact, Profiling}
+import ch.database.{Entities, Entity, Profiling}
 import ch.mailchimp.database.SegmentUpdate
 import ch.mailchimp.model.{APIConfiguration, ContactList, ContactSegment}
 import utopia.vault.database.Connection
@@ -49,34 +49,35 @@ object UpdateSegments
 		// If there was a new profiling made, compares it to the profiling used in the last update
 		latestProfiling.flatMap { latestProfiling =>
 		
-			val includedCompanyIds = Profiling(latestProfiling.id).companyIds.toSet
-			val previousCompanyIds = lastUpdate.map { last => Profiling(last.profilingId).companyIds.toSet }.getOrElse(Set())
+			val includedEntityIds = Profiling(latestProfiling.id).contentIds.toSet
+			val previousEntityIds = lastUpdate.map { last => Profiling(last.profilingId).contentIds.toSet }.getOrElse(Set())
 			
 			// Finds the contact changes caused by profiling updates
-			val (newContactIds, contactIdsToRemove) =
+			val (newContacts, contactsToRemove) =
 			{
 				// If the two profiling results were different, updates segments
-				if (includedCompanyIds != previousCompanyIds)
+				if (includedEntityIds != previousEntityIds)
 				{
-					val newCompanyIds = includedCompanyIds -- previousCompanyIds
-					val companyIdsToRemove = previousCompanyIds -- includedCompanyIds
+					val newEntityIds = includedEntityIds -- previousEntityIds
+					val entityIdsToRemove = previousEntityIds -- includedEntityIds
 					
-					// Finds contacts within each linked company
-					val newSegmentContacts = Contact.contactsWithin(newCompanyIds)
-					val contactsToRemove = Contact.contactsWithin(companyIdsToRemove)
+					// Finds segment targets within each linked entity
+					val newSegmentContacts = Entities.ofTypeWithId(list.contentTypeId).withinOther(newEntityIds)
+					val contactsToRemove = Entities.ofTypeWithId(list.contentTypeId).withinOther(entityIdsToRemove)
 					
 					newSegmentContacts -> contactsToRemove
 				}
 				else
-					Set[Int]() -> Set[Int]()
+					Set[ch.model.Entity]() -> Set[ch.model.Entity]()
 			}
 			
 			// Also checks for contacts that were added to accepted companies after the last profiling
-			val contactsAddedAfterLastProfile = Contact.contactsWithin(includedCompanyIds, Some(latestProfiling.time))
+			val contactsAddedAfterLastProfile = Entities.ofTypeWithId(list.contentTypeId).withinOther(
+				includedEntityIds, Some(latestProfiling.time))
 			
 			// Finds contact email addresses
-			val newSegmentEmails = (newContactIds ++ contactsAddedAfterLastProfile).flatMap { Contact.emailForId(_) }
-			val emailsToRemove = contactIdsToRemove.flatMap { Contact.emailForId(_) }
+			val newSegmentEmails = (newContacts ++ contactsAddedAfterLastProfile).flatMap { c => Entity(c.id).email }
+			val emailsToRemove = contactsToRemove.flatMap { c => Entity(c.id).email }
 			
 			// Sends data to MailChimp API
 			val updateProcess =

@@ -1,6 +1,6 @@
 package ch.controller
 
-import ch.database.{Algorithm, DataRead, DataReads, Entity, RiskScore, RiskScoringEvent}
+import ch.database.{Algorithm, Entities, Entity, RiskScore, RiskScoringEvent}
 import utopia.vault.database.Connection
 
 /**
@@ -23,18 +23,18 @@ object RiskScorer
 			Algorithm.id.ofLatestVersionForTypeWithId(typeId).foreach { currentAlgorithmId =>
 				
 				// Reads last scoring time and checks which entities' data has been updated since that
-				val updateReads =
+				val updatedEntityIds =
 				{
 					val lastScoring = RiskScoringEvent.latestForEntityTypeWithId(typeId)
 					
 					// Also updates scoring for all target entities whenever algorithm version changes
 					if (lastScoring.forall { _.algorithmId != currentAlgorithmId })
-						DataReads.forTypeWithId(typeId).latestVersions
+						Entities.ids.forTypeWithId(typeId).get
 					else
-						DataReads.forTypeWithId(typeId).latestVersionsAfter(lastScoring.get.created)
+						Entities.ids.forTypeWithId(typeId).updatedAfter(lastScoring.get.created)
 				}
 				
-				if (updateReads.nonEmpty)
+				if (updatedEntityIds.nonEmpty)
 				{
 					// Updates scoring for all affected entities
 					Algorithm.withId(currentAlgorithmId).foreach { algorithm =>
@@ -42,12 +42,12 @@ object RiskScorer
 						// Saves a new scoring event first
 						val newEvent = RiskScoringEvent.insert(currentAlgorithmId)
 						
-						updateReads.foreach { dataRead =>
-							val data = DataRead(dataRead.id).data
+						updatedEntityIds.foreach { targetId =>
+							val data = Entity(targetId).latestData
 							val score = algorithm(data)
 							
 							// Updates score to DB
-							RiskScore.insert(dataRead.targetId, score, newEvent)
+							RiskScore.insert(targetId, score, newEvent)
 						}
 					}
 				}

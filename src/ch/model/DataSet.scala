@@ -8,6 +8,12 @@ object DataSet
 	  * An empty data set
 	  */
 	val empty = DataSet(Set())
+	
+	/**
+	 * @param data Entity data
+	 * @return A data set based on the data
+	 */
+	def apply(data: Traversable[Data]) = new DataSet(data.map { d => d.label -> d.value }.toSet)
 }
 
 /**
@@ -40,7 +46,25 @@ case class DataSet(data: Set[(DataLabel, Value)])
 	 * @param other Another data set
 	 * @return A combination of these sets
 	 */
-	def ++(other: DataSet) = DataSet(data.filterNot { case (label, _) => other.containsLabelWithId(label.id) } ++ other.data)
+	def ++(other: DataSet) =
+	{
+		val myLabelIds = data.map { _._1.id }
+		val otherLabelIds = other.data.map { _._1.id }
+		val inBoth = myLabelIds & otherLabelIds
+		val onlyInMe = myLabelIds -- otherLabelIds
+		val onlyInOther = otherLabelIds -- myLabelIds
+		
+		// Will not overwrite data with empty values
+		val newSharedData = inBoth.map { id =>
+			val otherData = other(id).get
+			if (otherData._2.isDefined)
+				otherData
+			else
+				apply(id).get
+		}
+		
+		DataSet(onlyInMe.map { apply(_).get } ++ newSharedData ++ onlyInOther.map { other(_).get })
+	}
 	
 	
 	// OTHER	------------------------

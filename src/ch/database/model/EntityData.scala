@@ -1,5 +1,7 @@
 package ch.database.model
 
+import java.time.Instant
+
 import ch.database.Tables
 import ch.util.Log
 import utopia.flow.datastructure.immutable.Value
@@ -26,7 +28,7 @@ object EntityData extends FromRowFactory[ch.model.Data]
 					val value = valid("value").string.flatMap(JSONReader(_).toOption.flatMap {
 						_.castTo(label.dataType.flowType) }) getOrElse Value.empty
 					
-					ch.model.Data(valid("id").getInt, read, label, value)
+					ch.model.Data(valid("id").getInt, read, label, value, valid("deprecatedAfter").instant)
 				}
 				
 				result.failure.foreach { Log(_, s"Failed to parse entity data from $row") }
@@ -62,6 +64,12 @@ object EntityData extends FromRowFactory[ch.model.Data]
 	 * @return Model with only read id set
 	 */
 	def withReadId(readId: Int) = apply(readId = Some(readId))
+	
+	/**
+	 * @param deprecationTime Time of deprecation
+	 * @return A model with only deprecation time set
+	 */
+	def withDeprecatedAfter(deprecationTime: Instant) = apply(deprecatedAfter = Some(deprecationTime))
 }
 
 /**
@@ -70,14 +78,15 @@ object EntityData extends FromRowFactory[ch.model.Data]
  * @since 5.10.2019, v2+
  */
 case class EntityData(id: Option[Long] = None, readId: Option[Int] = None, labelId: Option[Int] = None,
-					  value: Option[Value] = None) extends StorableWithFactory[ch.model.Data]
+					  value: Option[Value] = None, deprecatedAfter: Option[Instant] = None)
+	extends StorableWithFactory[ch.model.Data]
 {
 	// IMPLEMENTED	---------------------
 	
 	override def factory = EntityData
 	
 	override def valueProperties = Vector("id" -> id, "read" -> readId, "label" -> labelId,
-		"value" -> value.map { _.toJSON })
+		"value" -> value.map { _.toJSON }, "deprecatedAfter" -> deprecatedAfter)
 	
 	
 	// OTHER	------------------------
