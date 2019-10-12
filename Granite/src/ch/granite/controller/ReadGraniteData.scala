@@ -5,9 +5,9 @@ import java.time.Instant
 import utopia.flow.util.CollectionExtensions._
 import utopia.flow.util.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
-import ch.database.{Company, ConnectionPool}
-import ch.granite.database.{Fields, Mappings}
-import ch.granite.model.{ContactRoleMapping, LabelMappingOld}
+import ch.database.{ConnectionPool, DataRead}
+import ch.granite.database.{Service, Services}
+import ch.granite.model.{Granite, LabelMapping, LinkTypeMapping}
 import ch.granite.util.GraniteSettings
 import ch.model.exception.InvalidSettingsException
 import ch.util.Log
@@ -56,10 +56,10 @@ object ReadGraniteData
 			val password = GraniteSettings.password.get
 			
 			// Finds the latest data read time
-			val lastReadTime = Company.lastRead.map { _.readTime }
+			val lastReadTime = DataRead.fromSourceWithId(Granite.id).latest.map { _.readTime }
 			
 			// Finds targeted service ids
-			val serviceIds = Fields.serviceIds
+			val serviceIds = Services.ids.all
 			if (serviceIds.isEmpty)
 			{
 				Log.warning("No service ids could be found from the database")
@@ -80,20 +80,17 @@ object ReadGraniteData
 								None
 							else
 							{
-								// If there were new responses, reads field & mapping data and starts parsing them.
+								// If there were new responses, reads field & mapping data and starts parsing the responses.
 								// Response handling may fail, however
-								// Finds field & option data
-								val fields = Fields.forService(serviceId)
-								val options = Fields.options.forService(serviceId)
-								
-								// Finds mapping data
-								val companyMappings = Mappings.company(fields, options)
-								val contactMappings = Mappings.contact(fields, options)
-								val roleMappings = Mappings.role(options)
+								val service = Service(serviceId)
+								val fieldMappings = service.fields.labelMappings.get
+								val optionMappings = service.options.labelMappings.get
+								val labelMappings = fieldMappings ++ optionMappings
+								val linkMappings = service.options.linkTypeMappings.get
 								
 								responseIds.findMap { responseId =>
 									
-									readResponse(responseId, user, password, companyMappings, contactMappings, roleMappings) match
+									readResponse(responseId, user, password, labelMappings, linkMappings) match
 									{
 										case Success(_) =>
 											parsedResponseCount += 1
@@ -160,8 +157,8 @@ object ReadGraniteData
 		}
 	}
 	
-	private def readResponse(responseId: Int, user: String, password: String, companyMappings: Seq[LabelMappingOld],
-							 contactMappings: Seq[LabelMappingOld], roleMappings: Seq[ContactRoleMapping])
+	private def readResponse(responseId: Int, user: String, password: String, labelMappings: Traversable[LabelMapping],
+							 linkMappings: Traversable[LinkTypeMapping])
 							(implicit executionContext: ExecutionContext, connection: Connection) =
 	{
 		// Requests response data from server
@@ -174,7 +171,7 @@ object ReadGraniteData
 			checkResponse(request, response, JSONReader(_).map { _.getModel }).map { model =>
 			
 				// Parses model into a result and handles it
-				ResultHandler(QueryParser(model), companyMappings, contactMappings, roleMappings)
+				ResultHandler(QueryParser(model), labelMappings, linkMappings)
 			}
 		}
 	}

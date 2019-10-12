@@ -40,7 +40,7 @@ case class DataSet(data: Set[(DataLabel, Value)])
 	 * @param other Another data set
 	 * @return A combination of these sets
 	 */
-	def ++(other: DataSet) = DataSet(data ++ other.data)
+	def ++(other: DataSet) = DataSet(data.filterNot { case (label, _) => other.containsLabelWithId(label.id) } ++ other.data)
 	
 	
 	// OTHER	------------------------
@@ -51,4 +51,10 @@ case class DataSet(data: Set[(DataLabel, Value)])
 	  * @return Value for the label. None if no such label was found.
 	  */
 	def apply(labelId: Int) = data.find { _._1.id == labelId }
+	
+	/**
+	 * @param labelId Searched label's id
+	 * @return Whether this data set contains a value (which may be empty) for the specified label
+	 */
+	def containsLabelWithId(labelId: Int) = data.exists { _._1.id == labelId }
 }

@@ -4,7 +4,7 @@ import utopia.flow.async.AsyncExtensions._
 import utopia.flow.util.TimeExtensions._
 import utopia.flow.generic.ValueConversions._
 import utopia.flow.util.CollectionExtensions._
-import ch.database.Contact
+import ch.database.Entities
 import ch.mailchimp.model.{APIConfiguration, ContactList}
 import ch.mailchimp.util.{MD5, MailChimpSettings}
 import ch.model.DataSet
@@ -27,25 +27,24 @@ object ContactsAPI
 	/**
 	  * Pushes (posts or updates) contact data to MailChimp API
 	  * @param list Targeted Contact list
-	  * @param newContactData Latest contact data
-	  * @param associatedCompanyData Latest data for associated company, if there is one
+	 *  @param dataForNewContact All data for the new contact, <b>including</b> that of associated linked entities
 	  * @param connection DB connection
 	  * @param exc Execution context
 	  * @param configuration API request configuration
 	  * @return A future of operation completion. None if no operation was performed (contact was missing an email)
 	  */
-	def push(list: ContactList, newContactData: DataSet, associatedCompanyData: Option[DataSet])
-			(implicit connection: Connection, exc: ExecutionContext, configuration: APIConfiguration) =
+	def push(list: ContactList, dataForNewContact: DataSet)(implicit connection: Connection, exc: ExecutionContext,
+															configuration: APIConfiguration) =
 	{
 		// Finds out the email label(s) id first
-		val emailLabels = Contact.emailLabels
+		val emailLabels = Entities.labels.forTypeWithId(list.contentTypeId).emails
 		
 		// Makes sure contact has an email address
-		emailLabels.findMap { label => newContactData(label.id).flatMap { _._2.string } }.map { email =>
+		emailLabels.findMap { label => dataForNewContact(label.id).flatMap { _._2.string } }.map { email =>
 		
 			// Checks whether specified email is already in the API, adds one if necessary
 			val emailHash = MD5.hash(email)
-			val mergeFields = makeMergeFieldsModel(list, newContactData, associatedCompanyData)
+			val mergeFields = makeMergeFieldsModel(list, dataForNewContact)
 			ensureExistenceOf(email, emailHash, mergeFields, list).map { alreadyExisted =>
 				
 				// If there already was a contact, updates its merge fields
@@ -103,11 +102,10 @@ object ContactsAPI
 		}
 	}
 	
-	private def makeMergeFieldsModel(list: ContactList, contactData: DataSet, companyData: Option[DataSet])
-									(implicit connection: Connection) =
+	private def makeMergeFieldsModel(list: ContactList, data: DataSet)(implicit connection: Connection) =
 	{
 		// Fills merge fields with values
-		val filledFields = list.mergeFields.map { field => field -> field(contactData, companyData) }
+		val filledFields = list.mergeFields.map { field => field -> field(data) }
 			.filter { _._2.isDefined }.map { case (field, value) => field.name -> value.get }
 		
 		// Forms a model from the fields

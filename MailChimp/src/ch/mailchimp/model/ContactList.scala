@@ -9,7 +9,8 @@ package ch.mailchimp.model
   * @param segments Segments under this list
   * @param mergeFields Merge fields used in this list
   */
-case class ContactList(id: Int, mailChimpListId: String, segments: Vector[ContactSegment], mergeFields: Vector[MergeField])
+case class ContactList(id: Int, contentTypeId: Int, mailChimpListId: String, segments: Vector[ContactSegment],
+					   mergeFields: Vector[MergeField])
 {
 	override def toString = s"$id ($mailChimpListId). Segments: [${segments.mkString(", ")}]. Merge fields: [${mergeFields.mkString(", ")}]]"
 }

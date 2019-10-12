@@ -53,14 +53,19 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 	
 	private def readFactory = model.DataRead
 	private def labelConfigurationFactory = model.EntityLabelConfiguration
+	private def linkFactory = model.EntityLink
+	private def linkTypeFactory = model.EntityLinkType
 	
 	private def dataTable = model.EntityData.table
 	private def readTable = readFactory.table
 	private def labelTable = model.EntityLabel.table
 	private def labelConfigurationTable = labelConfigurationFactory.table
+	private def linkTable = linkFactory.table
+	private def linkTypeTable = linkTypeFactory.table
 	
 	private def dataValueColumn = dataTable("value")
 	private def readTimeColumn = readTable("created")
+	private def linkTargetColumn = linkTable("target")
 	
 	private def nonDeprecatedCondition = labelConfigurationTable("deprecatedAfter").isNull
 	
@@ -122,6 +127,19 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 		 */
 		def latestRead(implicit connection: Connection) = readFactory.getMax(readTimeColumn,
 			readTargetCondition(id))
+		
+		
+		
+		/**
+		 * @param connection DB Connection
+		 * @return Entities that contain this entity
+		 */
+		def parentEntities(implicit connection: Connection) =
+		{
+			val target = linkTable.joinFrom(linkTargetColumn) join linkTypeTable
+			connection(Select(target, table) + Where(linkFactory.withOriginId(id).toCondition &&
+				linkTypeFactory.containment.toCondition)).parse(model.Entity)
+		}
 		
 		/**
 		 * @param timeThreshold The point in time before which items are excluded

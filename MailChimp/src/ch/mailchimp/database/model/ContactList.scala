@@ -37,7 +37,8 @@ object ContactList extends FromResultFactory[ch.mailchimp.model.ContactList]
 						val mergeFields = rows.filter { _.containsDataForTable(MergeField.table) }.distinctBy {
 							_.indexForTable(MergeField.table).getInt }.flatMap { MergeField(_) }.toVector
 						
-						Some(ch.mailchimp.model.ContactList(id, valid("mailChimpListId").getString, segments, mergeFields))
+						Some(ch.mailchimp.model.ContactList(id, valid("contentTypeId").getInt,
+							valid("mailChimpListId").getString, segments, mergeFields))
 					
 					case Failure(error) => Log(error, s"Failed to parse ContactList from ${rows.head}"); None
 				}

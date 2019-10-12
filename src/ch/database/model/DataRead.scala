@@ -36,6 +36,12 @@ object DataRead extends StorableFactoryWithValidation[ch.model.DataRead]
 	 * @return A read with specified company id
 	 */
 	def withTargetId(targetId: Int) = apply(targetId = Some(targetId))
+	
+	/**
+	 * @param sourceId Id of data read source
+	 * @return A model with only source id set
+	 */
+	def withSourceId(sourceId: Int) = apply(sourceId = Some(sourceId))
 }
 
 /**

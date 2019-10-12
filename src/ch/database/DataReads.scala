@@ -6,7 +6,7 @@ import utopia.vault.sql.Extensions._
 import utopia.flow.generic.ValueConversions._
 import utopia.vault.database.Connection
 import utopia.vault.model.immutable.access.ManyAccess
-import utopia.vault.sql.{MaxBy, Select, Where}
+import utopia.vault.sql.{Select, Where}
 
 /**
  * Used for accessing data reads in DB
@@ -37,12 +37,6 @@ object DataReads extends ManyAccess[Int, ch.model.DataRead]
 	def forTypeWithId(typeId: Int) = new ReadsForType(typeId)
 	
 	/**
-	 * @param connection DB connection
-	 * @return The latest data read
-	 */
-	def latest(implicit connection: Connection) = factory.getMax(readTimeColumn)
-	
-	/**
 	 * @param connection DB Connection
 	 * @return Latest data reads, one for each target entity
 	 */
@@ -55,6 +49,21 @@ object DataReads extends ManyAccess[Int, ch.model.DataRead]
 	 */
 	def latestVersionsAfter(threshold: Instant)(implicit connection: Connection) = grouped(
 		factory.getMany(timeThresholdCondition(threshold)))
+	
+	/**
+	 * Inserts new read data to DB
+	 * @param sourceId Data origin source id
+	 * @param targetId Data target id
+	 * @param readTime The time when data was read
+	 * @param connection DB connection
+	 * @return The new data read instance
+	 */
+	def insert(sourceId: Int, targetId: Int, dataOriginTime: Instant, readTime: Instant = Instant.now())
+			  (implicit connection: Connection) =
+	{
+		val id = factory.forInsert(sourceId, targetId, dataOriginTime, readTime).insert().getInt
+		ch.model.DataRead(id, sourceId, targetId, dataOriginTime, readTime)
+	}
 	
 	private def timeThresholdCondition(threshold: Instant) = readTimeColumn > threshold
 	
@@ -77,13 +86,6 @@ object DataReads extends ManyAccess[Int, ch.model.DataRead]
 		 * @return All data reads from this sub group
 		 */
 		def get(implicit connection: Connection) = connection(defaultSelect + Where(baseCondition)).parse(factory)
-		
-		/**
-		 * @param connection DB connection
-		 * @return The latest data read from this sub group
-		 */
-		def latest(implicit connection: Connection) = connection(defaultSelect + Where(baseCondition) +
-			MaxBy(readTimeColumn)).parseSingle(factory)
 		
 		/**
 		 * @param connection DB Connection

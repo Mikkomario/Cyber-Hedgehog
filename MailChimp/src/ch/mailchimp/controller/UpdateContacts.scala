@@ -1,6 +1,6 @@
 package ch.mailchimp.controller
 
-import ch.database.{Company, Contact}
+import ch.database.{Company, Contact, DataRead, DataReads, Entity}
 import ch.mailchimp.database.ContactUpdate
 import ch.mailchimp.model.{APIConfiguration, ContactList}
 import utopia.vault.database.Connection
@@ -24,6 +24,7 @@ object UpdateContacts
 	def apply()(implicit exc: ExecutionContext, connection: Connection, configuration: APIConfiguration): Vector[Future[Unit]] =
 	{
 		// Finds data for all contact lists and updates each
+		// TODO: create an access point for contact lists, perhaps?
 		ch.mailchimp.database.model.ContactList.getAll().flatMap { apply(_) }
 	}
 	
@@ -42,12 +43,16 @@ object UpdateContacts
 		
 		// Checks if contact data was updated after the last update event
 		val lastUpdateEvent = ContactUpdate.lastContactUpdateEventFor(list.id)
-		val updatedContactReads = lastUpdateEvent.map { update => Contact.lastReadsAfter(update.created) }
-			.getOrElse { Contact.lastReads }
+		val reads = DataReads.forTypeWithId(list.contentTypeId)
+		val updatedContactReads = lastUpdateEvent.map { update => reads.latestVersionsAfter(update.created) }
+			.getOrElse { reads.latestVersions }
 		
 		// println(s"Found ${updatedContactReads.size} new contact reads")
 		
 		val updates = updatedContactReads.flatMap { contactRead =>
+			
+			val contactData = DataRead(contactRead.id).data
+			// TODO: Find data for companies (and other entities) this contact works within
 			
 			// Reads latest data for each contact and also finds data for the last company the contact worked within
 			Contact.withId(contactRead.targetId).flatMap { contact =>

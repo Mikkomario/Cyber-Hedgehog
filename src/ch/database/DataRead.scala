@@ -1,10 +1,9 @@
 package ch.database
 
-import java.time.Instant
-
 import utopia.vault.database.Connection
 import utopia.vault.model.immutable.access.{ItemAccess, SingleAccess}
 import utopia.flow.generic.ValueConversions._
+import utopia.vault.sql.{MaxBy, Select, Where}
 
 /**
  * Used for accessing individual data reads in DB
@@ -13,6 +12,29 @@ import utopia.flow.generic.ValueConversions._
  */
 object DataRead extends SingleAccess[Int, ch.model.DataRead]
 {
+	// COMPUTED	--------------------
+	
+	private def readTimeColumn = table("created")
+	
+	/**
+	 * @param connection DB connection
+	 * @return The latest data read
+	 */
+	def latest(implicit connection: Connection) = factory.getMax(readTimeColumn)
+	
+	/**
+	 * @param typeId Targeted entity type's id
+	 * @return An access point to data read for specified entity type
+	 */
+	def forTypeWithId(typeId: Int) = new ReadOfType(typeId)
+	
+	/**
+	 * @param sourceId Data source's id
+	 * @return An access point to data read from specific data source
+	 */
+	def fromSourceWithId(sourceId: Int) = new ReadFromSource(sourceId)
+	
+	
 	// IMPLEMENTED	----------------
 	
 	override protected def idValue(id: Int) = id
@@ -20,24 +42,6 @@ object DataRead extends SingleAccess[Int, ch.model.DataRead]
 	override def factory = model.DataRead
 	
 	override def apply(id: Int) = new SingleDataRead(id)
-	
-	
-	// OTHER	--------------------
-	
-	/**
-	 * Inserts new read data to DB
-	 * @param sourceId Data origin source id
-	 * @param targetId Data target id
-	 * @param readTime The time when data was read
-	 * @param connection DB connection
-	 * @return The new data read instance
-	 */
-	def insert(sourceId: Int, targetId: Int, dataOriginTime: Instant, readTime: Instant = Instant.now())
-			  (implicit connection: Connection) =
-	{
-		val id = factory.forInsert(sourceId, targetId, dataOriginTime, readTime).insert().getInt
-		ch.model.DataRead(id, sourceId, targetId, dataOriginTime, readTime)
-	}
 	
 	
 	// NESTED	------------------------
@@ -49,6 +53,40 @@ object DataRead extends SingleAccess[Int, ch.model.DataRead]
 		 * @param connection DB connection
 		 * @return All read data
 		 */
-		def data(implicit connection: Connection) = Entity.Data.forReadWithId(id)
+		def data(implicit connection: Connection) = Entities.data.forReadWithId(id)
+	}
+	
+	class ReadOfType(val typeId: Int)
+	{
+		private def target = table join Entity.table
+		private def defaultSelect = Select(target, table)
+		private def baseCondition = model.Entity.withTypeId(typeId).toCondition
+		
+		/**
+		 * @param connection DB connection
+		 * @return The latest data read from this sub group
+		 */
+		def latest(implicit connection: Connection) = connection(defaultSelect + Where(baseCondition) +
+			MaxBy(readTimeColumn)).parseSingle(factory)
+	}
+	
+	class ReadFromSource(val sourceId: Int)
+	{
+		/**
+		 * @param connection DB connection
+		 * @return The latest data read for this specific source
+		 */
+		def latest(implicit connection: Connection) = factory.getMax(readTimeColumn,
+			factory.withSourceId(sourceId).toCondition)
+	}
+	
+	class ReadForEntity(val entityId: Int)
+	{
+		/**
+		 * @param connection DB connection
+		 * @return The latest data read for specified entity
+		 */
+		def latest(implicit connection: Connection) = factory.getMax(readTimeColumn,
+			factory.withTargetId(entityId).toCondition)
 	}
 }

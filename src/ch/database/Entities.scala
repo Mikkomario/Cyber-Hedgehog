@@ -243,6 +243,19 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		// OTHER	-----------------------
 		
 		/**
+		 * Inserts a link between two entities
+		 * @param originEntityId Id of link origin
+		 * @param targetEntityId Id of link target
+		 * @param sourceId Id of link data source
+		 * @param linkTypeId Id of link type
+		 * @param connection DB connection
+		 * @return Id of inserted link
+		 */
+		def insert(originEntityId: Int, targetEntityId: Int, sourceId: Int, linkTypeId: Int)
+				  (implicit connection: Connection) = factory.forInsert(originEntityId, targetEntityId,
+			linkTypeId, sourceId).insert().getInt
+		
+		/**
 		 * Links two entities together
 		 * @param originEntityId Id of link origin
 		 * @param targetEntityId Id of link target

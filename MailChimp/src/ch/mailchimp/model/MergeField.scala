@@ -10,20 +10,16 @@ import ch.model.DataSet
   * @param listId Id of this field's list context
   * @param mergeId This field's 'merge id' in mailChimp platform
   * @param name This field's name in mailChimp
-  * @param contactLabelId Id of associated contact label (None if not associated with a contact label)
-  * @param companyLabelId Id of associated company label (None if not associated with a company label)
+ *  @param labelId Id Of associated entity label
   */
-case class MergeField(id: Int, listId: Int, mergeId: Int, name: String,
-					  contactLabelId: Option[Int], companyLabelId: Option[Int])
+case class MergeField(id: Int, listId: Int, mergeId: Int, name: String, labelId: Int)
 {
 	override def toString = s"$id ($mergeId, $name)"
 	
 	/**
 	  * Finds value for this merge field from provided contact / company data
-	  * @param contactData Contact data available
-	  * @param companyData Company data available
-	  * @return Label value pair for this field. None if no data could be found.
+	 *  @param data All entity data available. May contain data from multiple linked entities
+	  * @return Value for this field. None if no data could be found.
 	  */
-	def apply(contactData: DataSet, companyData: Option[DataSet]) = contactLabelId.flatMap { contactData(_) }
-		.orElse { companyLabelId.flatMap { labelId => companyData.flatMap { _(labelId) } } }.map { _._2 }
+	def apply(data: DataSet) = data(labelId).map { _._2 }
 }
