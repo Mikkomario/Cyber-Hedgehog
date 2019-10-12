@@ -13,6 +13,10 @@ import utopia.flow.datastructure.immutable.Value
  */
 case class FieldLabelMapping(id: Int, field: Field, override val label: DataLabel) extends LabelMapping
 {
+	// IMPLEMENTED	-------------------------
+	
+	override def toString = s"Granite Field ${field.graniteId} -> Label ${label.id}"
+	
 	/**
 	 * Finds the provided value from a query result
 	 * @param result A query result

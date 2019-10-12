@@ -58,11 +58,11 @@ object ReadGraniteData
 			// Finds the latest data read time
 			val lastReadTime = DataRead.fromSourceWithId(Granite.id).latest.map { _.readTime }
 			
-			// Finds targeted service ids
-			val serviceIds = Services.ids.all
-			if (serviceIds.isEmpty)
+			// Finds targeted services
+			val services = Services.all
+			if (services.isEmpty)
 			{
-				Log.warning("No service ids could be found from the database")
+				Log.warning("No service data could be found from the database")
 				Success(0)
 			}
 			else
@@ -70,9 +70,9 @@ object ReadGraniteData
 				var parsedResponseCount = 0
 				
 				// Requests data from each service. Starts by searching for new responses
-				val serviceHandleFailure = serviceIds.findMap { serviceId =>
+				val serviceHandleFailure = services.findMap { service =>
 					
-					newResponseIdsForService(serviceId, lastReadTime, user, password) match
+					newResponseIdsForService(service.graniteId, lastReadTime, user, password) match
 					{
 						case Success(responseIds) =>
 							
@@ -82,11 +82,11 @@ object ReadGraniteData
 							{
 								// If there were new responses, reads field & mapping data and starts parsing the responses.
 								// Response handling may fail, however
-								val service = Service(serviceId)
-								val fieldMappings = service.fields.labelMappings.get
-								val optionMappings = service.options.labelMappings.get
+								val serviceAccess = Service(service.id)
+								val fieldMappings = serviceAccess.fields.labelMappings.get
+								val optionMappings = serviceAccess.options.labelMappings.get
 								val labelMappings = fieldMappings ++ optionMappings
-								val linkMappings = service.options.linkTypeMappings.get
+								val linkMappings = serviceAccess.options.linkTypeMappings.get
 								
 								responseIds.findMap { responseId =>
 									

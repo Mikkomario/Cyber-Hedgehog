@@ -11,6 +11,8 @@ import utopia.vault.sql.Extensions._
 import utopia.flow.util.CollectionExtensions._
 import utopia.vault.sql.{Condition, ConditionElement, Select, Update, Where}
 
+import scala.collection.immutable.HashMap
+
 object EntityIds extends ManyIdAccess[Int] with IntIdAccess
 {
 	// COMPUTED	-----------------------
@@ -71,8 +73,10 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 	// COMPUTED	-------------------------
 	
 	private def labelConfigurationFactory = model.EntityLabelConfiguration
+	private def readFactory = model.DataRead
 	
 	private def labelConfigurationTable = labelConfigurationFactory.table
+	private def readTable = readFactory.table
 	
 	private def nonDeprecatedCondition = labelConfigurationTable("deprecatedAfter").isNull
 	
@@ -256,18 +260,22 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		/**
 		 * Inserts new target data to DB
 		 * @param readId The data read instance's id
+		 * @param readTargetId Id of entity whose data is updated
 		 * @param data New data (labelId -> new value)
 		 * @param connection DB connection
 		 */
-		def insert(readId: Int, data: Traversable[(Int, Value)])(implicit connection: Connection) =
+		def insert(readId: Int, readTargetId: Int, data: Traversable[(Int, Value)])(implicit connection: Connection) =
 		{
 			// Will not insert empty values
 			val nonEmptyData = data.filter { _._2.isDefined }
 			
 			// Deprecates older versions of data and inserts the new version
+			val target = table join readTable
+			val update = Update(target, HashMap(table -> factory.withDeprecatedAfter(Instant.now()).toModel.withoutEmptyValues))
+			val baseCondition = readFactory.withTargetId(readTargetId).toCondition && nonDeprecatedCondition
+			
 			nonEmptyData.foreach { case (labelId, value) =>
-				(model.EntityData.withDeprecatedAfter(Instant.now()).toUpdateStatement() +
-					Where(nonDeprecatedCondition && model.EntityData.withLabelId(labelId).toCondition)).execute()
+				connection(update + Where(baseCondition && factory.withLabelId(labelId).toCondition))
 				model.EntityData.forInsert(readId, labelId, value).insert()
 			}
 		}

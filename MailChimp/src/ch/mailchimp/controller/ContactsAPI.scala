@@ -87,16 +87,16 @@ object ContactsAPI
 					{
 						case Success(postResponse) =>
 							if (postResponse.status.group != StatusGroup.Success)
-								Log.warning(s"Received non-OK status to contact post. Response: $postResponse")
+								Log.warning(s"Received non-OK status to contact post (Contact: $contactModel). Response: $postResponse")
 							false
 							
 						case Failure(error) =>
-							Log(error, "Failed to post contact data to MailChimp")
+							Log(error, s"Failed to post contact data to MailChimp (Contact: $contactModel)")
 							false
 					}
 					
 				case _ =>
-					Log.warning(s"Received an unexpected status to contact GET. Response: $getResponse")
+					Log.warning(s"Received an unexpected status to contact GET. Email: $email / $emailHash. Response: $getResponse")
 					false
 			}
 		}

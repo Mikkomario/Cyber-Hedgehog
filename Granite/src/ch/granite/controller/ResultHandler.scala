@@ -50,7 +50,7 @@ object ResultHandler
 				
 				// Pushes all read data to DB
 				val allData = identifierData ++ regularData
-				Entities.data.insert(dataRead.id, allData.data.map { case (label, value) => label.id -> value })
+				Entities.data.insert(dataRead.id, targetId, allData.data.map { case (label, value) => label.id -> value })
 				
 				Some(typeId -> targetId)
 			}
@@ -77,14 +77,18 @@ object ResultHandler
 	
 	private def readValues(result: QueryResult, mappings: Traversable[LabelMapping]) =
 	{
-		val mapped = mappings.map { mapping => mapping.label -> mapping(result) }
-		val (success, failed) = mapped.divideBy { _._2.isEmpty }
+		val mapped = mappings.map { mapping => mapping -> mapping(result) }
+		val (success, _) = mapped.divideBy { _._2.isEmpty }
 		
+		/* TODO: Add some sort of error handling, but remember that some option mappings are supposed to return an empty value
 		// If some of the labels couldn't be mapped, logs a warning
 		if (failed.nonEmpty)
-			Log.warning(s"Failed to map some of the granite results (${failed.map { _._1.id }.mkString(", ")}) for $result")
+		{
+			val trulyFailed = failed.filter { _._1. }
+			Log.warning(s"Failed to map some of the granite results (${failed.map { case (mapping, _) => mapping }.toSet.mkString(", ")}) for $result")
+		}*/
 		
 		// Will not include empty values in the results, however
-		DataSet(success.map { case (label, value) => label -> value.get }.filter { _._2.isDefined }.toSet)
+		DataSet(success.map { case (mapping, value) => mapping.label -> value.get }.filter { _._2.isDefined }.toSet)
 	}
 }

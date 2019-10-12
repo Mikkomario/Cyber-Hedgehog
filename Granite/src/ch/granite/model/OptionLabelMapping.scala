@@ -17,6 +17,8 @@ import utopia.flow.datastructure.immutable.Value
 case class OptionLabelMapping(id: Int, option: SelectOption, override val label: DataLabel, valueWhenFound: Boolean,
 							  isDeterministic: Boolean) extends LabelMapping
 {
+	override def toString = s"Granite option ${option.field.graniteId}:${option.graniteId} -> Label ${label.id}"
+	
 	/**
 	 * Finds the provided value from a query result
 	 * @param result A query result

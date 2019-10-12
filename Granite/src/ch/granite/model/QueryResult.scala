@@ -17,6 +17,6 @@ case class QueryResult(baseValues: Map[Int, Value], dropDownIds: Map[Int, Option
 					   multiSelectIds: Map[Int, Vector[Int]], dataOriginTime: Instant)
 {
 	override def toString = s"Drop downs: [${
-		dropDownIds.toVector.filter { _._2.isDefined }.map { case (key, value) => s"$key: $value" }.mkString(", ") }]\nMultiselect: [${
+		dropDownIds.toVector.filter { _._2.isDefined }.map { case (key, value) => s"$key: ${value.get}" }.mkString(", ") }]\nMultiselect: [${
 		multiSelectIds.map { case (key, value) => s"$key: [${value.mkString(", ")}]" }.mkString(", ") }]\nOther keys: [${baseValues.keys.mkString(", ")}]"
 }

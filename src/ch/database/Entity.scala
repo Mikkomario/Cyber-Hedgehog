@@ -154,8 +154,8 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 		 */
 		def latestData(implicit connection: Connection) =
 		{
-			val where = Where(readTargetCondition && nonDeprecatedLabelCondition && nonDeprecatedDataCondition)
-			DataSet(connection(Select(model.EntityData.target, dataTable) + where).parse(model.EntityData))
+			val where = readTargetCondition && nonDeprecatedLabelCondition && nonDeprecatedDataCondition
+			DataSet(model.EntityData.getMany(where))
 		}
 		
 		
