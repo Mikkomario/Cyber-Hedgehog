@@ -3,7 +3,6 @@ package ch.granite.database.model
 import ch.granite.database.Tables
 import utopia.flow.generic.ValueConversions._
 import ch.granite.model
-import ch.granite.model.SelectOption
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
 import utopia.vault.model.immutable.factory.LinkedStorableFactory
@@ -16,7 +15,7 @@ object LinkTypeMapping extends LinkedStorableFactory[model.LinkTypeMapping, mode
 	
 	override def childFactory = SelectOption
 	
-	override def apply(model: Model[Constant], child: SelectOption) =
+	override def apply(model: Model[Constant], child: ch.granite.model.SelectOption) =
 		table.requirementDeclaration.validate(model).toTry.map { valid => ch.granite.model.LinkTypeMapping(
 			valid("id").getInt, child, valid("originType").getInt, valid("targetType").getInt, valid("linkType").getInt)
 	}

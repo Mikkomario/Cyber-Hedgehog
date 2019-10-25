@@ -4,7 +4,7 @@ import java.time.Instant
 
 import ch.model.DataSet
 import utopia.flow.datastructure.immutable.Value
-import utopia.vault.model.immutable.access.{IntIdAccess, ItemAccess, SingleAccessWithIds, SingleIdAccess}
+import utopia.vault.model.immutable.access.{IntIdAccess, ItemAccess, SingleAccess, SingleAccessWithIds, SingleIdAccess}
 import utopia.flow.generic.ValueConversions._
 import utopia.flow.util.CollectionExtensions._
 import utopia.flow.parse.JSONReader
@@ -74,6 +74,11 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 	private def nonDeprecatedLabelCondition = labelConfigurationTable("deprecatedAfter").isNull
 	private def nonDeprecatedDataCondition = dataDeprecatedColumn.isNull
 	private def nonDeprecatedLinkCondition = linkDeprecatedColumn.isNull
+	
+	/**
+	 * @return Access point to individual entity labels
+	 */
+	def label = Label
 	
 	/**
 	 * @param connection DB Connection
@@ -168,5 +173,56 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 		 */
 		def latestReadAfter(timeThreshold: Instant)(implicit connection: Connection) =
 			readFactory.getMax(readTimeColumn, readTargetCondition && readTimeColumn > timeThreshold)
+	}
+	
+	object Label extends SingleAccess[Int, ch.model.EntityLabel]
+	{
+		// IMPLEMENTED	----------------
+		
+		override protected def idValue(id: Int) = id
+		
+		override def factory = model.EntityLabel
+		
+		override def apply(id: Int) = new SingleLabelAccess(id)
+		
+		
+		// NESTED	-------------------
+		
+		class SingleLabelAccess(val labelId: Int) extends ItemAccess[ch.model.EntityLabel](labelId, factory)
+		{
+			// COMPUTED	---------------
+			
+			private def descriptionFactory = model.EntityLabelDescription
+			
+			private def nonDeprecatedDescriptionCondition = descriptionFactory.table("deprecatedAfter").isNull
+			
+			
+			// OTHER	---------------
+			
+			/**
+			 * @param languageCode ISO code of targeted language
+			 * @param connection DB Connection
+			 * @return This label's description in specified language. None if there's no description in that language.
+			 */
+			def descriptionWithLanguage(languageCode: String)(implicit connection: Connection) =
+				descriptionFactory.get(descriptionFactory.withLabelId(labelId).withLanguageCode(languageCode).toCondition &&
+					nonDeprecatedDescriptionCondition)
+			
+			/**
+			 * Finds a description for this label from multiple language options
+			 * @param preferredLanguages Preferred languages, from most to least preferred
+			 * @param connection DB Connection
+			 * @return A description for this label in a preferred language, or all descriptions if no preferred
+			 *         description could be found
+			 */
+			def descriptions(preferredLanguages: Seq[String])(implicit connection: Connection) =
+			{
+				// Targets specific languages first
+				// If no description was found for any preferred language, returns all descriptions
+				preferredLanguages.findMap(descriptionWithLanguage).map { Vector(_) }.getOrElse {
+					descriptionFactory.getMany(descriptionFactory.withLabelId(labelId).toCondition &&
+					nonDeprecatedDescriptionCondition) }
+			}
+		}
 	}
 }

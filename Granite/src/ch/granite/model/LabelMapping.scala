@@ -1,6 +1,6 @@
 package ch.granite.model
 
-import ch.model.DataLabel
+import ch.model.EntityLabel
 import utopia.flow.datastructure.immutable.Value
 
 /**
@@ -13,7 +13,7 @@ trait LabelMapping
 	/**
 	 * @return Label to which data is mapped
 	 */
-	def label: DataLabel
+	def label: EntityLabel
 	
 	/**
 	 * @param result Granite read result

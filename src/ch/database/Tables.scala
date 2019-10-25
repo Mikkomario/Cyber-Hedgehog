@@ -29,6 +29,10 @@ object Tables
 	 */
 	def entityLabel = apply("entity_label")
 	/**
+	 * @return Table that contains descriptions for labels in various different languages
+	 */
+	def entityLabelDescription = apply("entity_label_description")
+	/**
 	 * @return Table that contains specifications for labels
 	 */
 	def entityLabelConfiguration = apply("entity_label_configuration")

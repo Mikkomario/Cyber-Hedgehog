@@ -8,7 +8,7 @@ import utopia.flow.generic.ValueConversions._
 
 import scala.util.{Failure, Success}
 
-object EntityLabel extends FromRowFactory[ch.model.DataLabel]
+object EntityLabel extends FromRowFactory[ch.model.EntityLabel]
 {
 	// IMPLEMENTED	------------------------
 	
@@ -18,7 +18,7 @@ object EntityLabel extends FromRowFactory[ch.model.DataLabel]
 		case Success(model) =>
 			val configuration = row.columnData.get(EntityLabelConfiguration.table).flatMap {
 				EntityLabelConfiguration.apply(_).toOption }
-			Some(ch.model.DataLabel(model("id").getInt, model("targetType").getInt, configuration))
+			Some(ch.model.EntityLabel(model("id").getInt, model("targetType").getInt, configuration))
 			
 		case Failure(e) => Log(e, s"Failed to parse EntityLabel from $row"); None
 	}
@@ -40,7 +40,7 @@ object EntityLabel extends FromRowFactory[ch.model.DataLabel]
  * @author Mikko Hilpinen
  * @since 5.10.2019, v2+
  */
-case class EntityLabel(id: Option[Int] = None, targetTypeId: Option[Int] = None) extends StorableWithFactory[ch.model.DataLabel]
+case class EntityLabel(id: Option[Int] = None, targetTypeId: Option[Int] = None) extends StorableWithFactory[ch.model.EntityLabel]
 {
 	override def factory = EntityLabel
 	

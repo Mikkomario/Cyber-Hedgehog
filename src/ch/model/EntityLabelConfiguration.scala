@@ -14,9 +14,9 @@ import java.time.Instant
  * @param created Time when this configuration was made
  * @param deprecatedSince Time after this configuration became deprecated
  */
-case class DataLabelConfiguration(id: Int, labelId: Int, dataType: DataType, isIdentifier: Boolean = false,
-								  isEmail: Boolean = false, created: Instant = Instant.now(),
-								  deprecatedSince: Option[Instant] = None)
+case class EntityLabelConfiguration(id: Int, labelId: Int, dataType: DataType, isIdentifier: Boolean = false,
+									isEmail: Boolean = false, created: Instant = Instant.now(),
+									deprecatedSince: Option[Instant] = None)
 {
 	/**
 	 * @return Whether this data has been deprecated

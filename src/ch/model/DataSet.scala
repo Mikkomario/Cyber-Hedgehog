@@ -21,7 +21,7 @@ object DataSet
   * @author Mikko Hilpinen
   * @since 18.7.2019, v0.1+
   */
-case class DataSet(data: Set[(DataLabel, Value)])
+case class DataSet(data: Set[(EntityLabel, Value)])
 {
 	// COMPUTED	------------------------
 	

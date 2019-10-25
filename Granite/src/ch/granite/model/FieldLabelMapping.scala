@@ -1,6 +1,6 @@
 package ch.granite.model
 
-import ch.model.DataLabel
+import ch.model.EntityLabel
 import utopia.flow.datastructure.immutable.Value
 
 /**
@@ -11,7 +11,7 @@ import utopia.flow.datastructure.immutable.Value
  * @param field Mapped field
  * @param label Mapped label
  */
-case class FieldLabelMapping(id: Int, field: Field, override val label: DataLabel) extends LabelMapping
+case class FieldLabelMapping(id: Int, field: Field, override val label: EntityLabel) extends LabelMapping
 {
 	// IMPLEMENTED	-------------------------
 	

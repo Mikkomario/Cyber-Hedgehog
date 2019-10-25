@@ -12,7 +12,7 @@ import utopia.vault.model.immutable.factory.StorableFactory
 
 import scala.util.{Failure, Success}
 
-object EntityLabelConfiguration extends StorableFactory[ch.model.DataLabelConfiguration]
+object EntityLabelConfiguration extends StorableFactory[ch.model.EntityLabelConfiguration]
 {
 	// IMPLEMENTED	----------------------
 	
@@ -22,7 +22,7 @@ object EntityLabelConfiguration extends StorableFactory[ch.model.DataLabelConfig
 		model).toTry.flatMap { valid =>
 		val dataType = DataType.forInt(valid("dataType").getInt)
 		if (dataType.isDefined)
-			Success(ch.model.DataLabelConfiguration(valid("id").getInt, valid("label").getInt, dataType.get,
+			Success(ch.model.EntityLabelConfiguration(valid("id").getInt, valid("label").getInt, dataType.get,
 				valid("isIdentifier").getBoolean, valid("isEmail").getBoolean, valid("created").getInstant,
 				valid("deprecatedAfter").instant))
 		else
@@ -57,7 +57,7 @@ case class EntityLabelConfiguration(id: Option[Int] = None, labelId: Option[Int]
 									dataType: Option[DataType] = None, isIdentifier: Option[Boolean] = None,
 									isEmail: Option[Boolean] = None, created: Option[Instant] = None,
 									deprecatedAfter: Option[Instant] = None)
-	extends StorableWithFactory[ch.model.DataLabelConfiguration]
+	extends StorableWithFactory[ch.model.EntityLabelConfiguration]
 {
 	override def factory = EntityLabelConfiguration
 	

@@ -8,7 +8,7 @@ package ch.model
  *  @param targetEntityTypeId Id of the entity type this label describes
  *  @param currentConfiguration The current configuration of this label (optional)
   */
-case class DataLabel(id: Int, targetEntityTypeId: Int, currentConfiguration: Option[DataLabelConfiguration])
+case class EntityLabel(id: Int, targetEntityTypeId: Int, currentConfiguration: Option[EntityLabelConfiguration])
 {
 	/**
 	 * @return The data type of this label's contents

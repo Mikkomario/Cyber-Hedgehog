@@ -1,7 +1,7 @@
 package ch.granite.model
 
 import utopia.flow.generic.ValueConversions._
-import ch.model.DataLabel
+import ch.model.EntityLabel
 import utopia.flow.datastructure.immutable.Value
 
 /**
@@ -14,7 +14,7 @@ import utopia.flow.datastructure.immutable.Value
  * @param valueWhenFound Value assigned to label on selection
  * @param isDeterministic Whether negated value should be assigned when not selected
  */
-case class OptionLabelMapping(id: Int, option: SelectOption, override val label: DataLabel, valueWhenFound: Boolean,
+case class OptionLabelMapping(id: Int, option: SelectOption, override val label: EntityLabel, valueWhenFound: Boolean,
 							  isDeterministic: Boolean) extends LabelMapping
 {
 	override def toString = s"Granite option ${option.field.graniteId}:${option.graniteId} -> Label ${label.id}"
