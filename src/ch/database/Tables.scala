@@ -17,6 +17,10 @@ object Tables
 	// COMPUTED	------------------------
 	
 	/**
+	 * @return Table that contains all user languages
+	 */
+	def language = apply("language")
+	/**
 	 * @return Table that contains all entity types
 	 */
 	def entityType = apply("entity_type")

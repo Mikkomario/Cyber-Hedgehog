@@ -200,12 +200,12 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 			// OTHER	---------------
 			
 			/**
-			 * @param languageCode ISO code of targeted language
+			 * @param languageId Id of targeted language
 			 * @param connection DB Connection
 			 * @return This label's description in specified language. None if there's no description in that language.
 			 */
-			def descriptionWithLanguage(languageCode: String)(implicit connection: Connection) =
-				descriptionFactory.get(descriptionFactory.withLabelId(labelId).withLanguageCode(languageCode).toCondition &&
+			def descriptionWithLanguage(languageId: Int)(implicit connection: Connection) =
+				descriptionFactory.get(descriptionFactory.withLabelId(labelId).withLanguageId(languageId).toCondition &&
 					nonDeprecatedDescriptionCondition)
 			
 			/**
@@ -215,7 +215,7 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 			 * @return A description for this label in a preferred language, or all descriptions if no preferred
 			 *         description could be found
 			 */
-			def descriptions(preferredLanguages: Seq[String])(implicit connection: Connection) =
+			def descriptions(preferredLanguages: Seq[Int])(implicit connection: Connection) =
 			{
 				// Targets specific languages first
 				// If no description was found for any preferred language, returns all descriptions
