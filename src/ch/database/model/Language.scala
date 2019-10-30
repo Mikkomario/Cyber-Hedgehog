@@ -14,6 +14,15 @@ object Language extends StorableFactoryWithValidation[ch.model.Language]
 		model("isoCode").getString, model("localName").getString, model("englishName").getString)
 	
 	override def table = Tables.language
+	
+	
+	// OTHER	-------------------------
+	
+	/**
+	 * @param isoCode ISO standard code for language
+	 * @return A model with only code set
+	 */
+	def withCode(isoCode: String) = Language(isoCode = Some(isoCode))
 }
 
 /**

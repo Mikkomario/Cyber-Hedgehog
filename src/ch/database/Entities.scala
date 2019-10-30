@@ -9,7 +9,7 @@ import utopia.vault.model.immutable.access.{ConditionalManyAccess, IntIdAccess, 
 import utopia.flow.generic.ValueConversions._
 import utopia.vault.sql.Extensions._
 import utopia.flow.util.CollectionExtensions._
-import utopia.vault.sql.{Condition, ConditionElement, Select, Update, Where}
+import utopia.vault.sql.{Condition, ConditionElement, Select, SelectAll, Update, Where}
 
 import scala.collection.immutable.HashMap
 
@@ -172,7 +172,7 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		private def factory = model.EntityLabel
 		private def table = factory.table
 		private def target = table join labelConfigurationTable
-		private def defaultSelect = Select(target, table)
+		private def defaultSelect = SelectAll(target)
 		private def defaultCondition = nonDeprecatedCondition
 		
 		/**
