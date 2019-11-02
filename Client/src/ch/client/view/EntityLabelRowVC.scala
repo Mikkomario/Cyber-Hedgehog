@@ -43,9 +43,11 @@ class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: Described
 	
 	// INITIAL CODE	--------------------
 	
+	typeSelection.addValueListener(d => println(s"Label: ${_label.label.id}, change: $d"))
+	println()
 	println(s"${_label.dataType}, email: ${_label.isEmail}, id: ${_label.isIdentifier}")
 	typeSelection.selectOne(_label.dataType) // FIXME: Selection not working
-	println(typeSelection.selectedDisplay)
+	println(typeSelection.selected)
 	isEmailSwitch.isOn = _label.isEmail
 	isIdentifierSwitch.isOn = _label.isIdentifier
 	
@@ -64,6 +66,8 @@ class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: Described
 	
 	override def content_=(newContent: DescribedEntityLabel) =
 	{
+		println("updating content")
+		
 		// Updates local data
 		_label = newContent
 		

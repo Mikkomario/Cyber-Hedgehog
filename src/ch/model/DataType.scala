@@ -46,7 +46,7 @@ object DataType
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
-sealed trait DataType
+sealed trait DataType extends Equals
 {
 	/**
 	  * @return An integer representation of this data type
