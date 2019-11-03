@@ -6,6 +6,7 @@ import ch.model.DataType.{BooleanType, StringType}
 import ch.model.{DataType, DescribedEntityLabel}
 import utopia.reflection.component.Refreshable
 import utopia.reflection.component.swing.{DropDown, StackableAwtComponentWrapperWrapper, Switch, TextField}
+import utopia.reflection.container.stack.StackLayout.Center
 import utopia.reflection.container.stack.segmented.SegmentedGroup
 import utopia.reflection.container.swing.SegmentedRow
 import utopia.reflection.localization.{DisplayFunction, LocalizedString, Localizer}
@@ -38,16 +39,13 @@ class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: Described
 	private val isIdentifierSwitch = Switch.contextual
 	
 	private val _view = SegmentedRow.partOfGroupWithItems(segmentGroup, Vector(labelNameField, typeSelection,
-		isEmailSwitch, isIdentifierSwitch))
+		isEmailSwitch, isIdentifierSwitch), layout = Center)
 	
 	
 	// INITIAL CODE	--------------------
 	
 	typeSelection.addValueListener(d => println(s"Label: ${_label.label.id}, change: $d"))
-	println()
-	println(s"${_label.dataType}, email: ${_label.isEmail}, id: ${_label.isIdentifier}")
-	typeSelection.selectOne(_label.dataType) // FIXME: Selection not working
-	println(typeSelection.selected)
+	typeSelection.selectOne(_label.dataType)
 	isEmailSwitch.isOn = _label.isEmail
 	isIdentifierSwitch.isOn = _label.isIdentifier
 	
