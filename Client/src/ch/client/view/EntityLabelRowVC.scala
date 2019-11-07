@@ -1,16 +1,17 @@
 package ch.client.view
 
+import utopia.reflection.shape.LengthExtensions._
 import ch.client.model.UserSettings
 import ch.client.util.Settings
 import ch.model.DataType.{BooleanType, StringType}
 import ch.model.{DataType, DescribedEntityLabel}
 import utopia.reflection.component.Refreshable
 import utopia.reflection.component.swing.{DropDown, StackableAwtComponentWrapperWrapper, Switch, TextField}
-import utopia.reflection.container.stack.StackLayout.Center
+import utopia.reflection.container.stack.StackLayout.Fit
 import utopia.reflection.container.stack.segmented.SegmentedGroup
 import utopia.reflection.container.swing.SegmentedRow
 import utopia.reflection.localization.{DisplayFunction, LocalizedString, Localizer}
-import utopia.reflection.util.ComponentContext
+import utopia.reflection.util.{ComponentContext, ComponentContextBuilder}
 
 /**
  * Shows editable data for an entity label
@@ -18,13 +19,15 @@ import utopia.reflection.util.ComponentContext
  * @since 25.10.2019, v3+
  */
 class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: DescribedEntityLabel)
-					  (implicit context: ComponentContext, settings: UserSettings)
+					  (implicit context: ComponentContextBuilder, settings: UserSettings)
 	extends Refreshable[DescribedEntityLabel] with StackableAwtComponentWrapperWrapper
 {
 	// ATTRIBUTES	--------------------
 	
 	private implicit val originLanguage: String = Settings.sourceLanguageCode
 	private implicit val localizer: Localizer = settings.localizer
+	private implicit val baseContext: ComponentContext = context.withTextFieldWidth(
+		context.normalWidth.upscaling.withLowPriority).result
 	
 	private var _label = initialLabel
 	
@@ -39,12 +42,13 @@ class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: Described
 	private val isIdentifierSwitch = Switch.contextual
 	
 	private val _view = SegmentedRow.partOfGroupWithItems(segmentGroup, Vector(labelNameField, typeSelection,
-		isEmailSwitch, isIdentifierSwitch), layout = Center)
+		isEmailSwitch.alignedToCenter, isIdentifierSwitch.alignedToCenter),
+		margin = baseContext.relatedItemsStackMargin.downscaling, layout = Fit)
 	
 	
 	// INITIAL CODE	--------------------
 	
-	typeSelection.addValueListener(d => println(s"Label: ${_label.label.id}, change: $d"))
+	// typeSelection.addValueListener(d => println(s"Label: ${_label.label.id}, change: $d"))
 	typeSelection.selectOne(_label.dataType)
 	isEmailSwitch.isOn = _label.isEmail
 	isIdentifierSwitch.isOn = _label.isIdentifier
