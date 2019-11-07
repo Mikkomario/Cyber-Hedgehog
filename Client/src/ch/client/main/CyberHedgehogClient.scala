@@ -13,7 +13,6 @@ import utopia.reflection.container.swing.window.Frame
 import utopia.reflection.container.swing.window.WindowResizePolicy.User
 import utopia.reflection.text.Font
 import utopia.reflection.util.{ComponentContext, ComponentContextBuilder}
-import utopia.vault.database.Connection
 import utopia.vault.util.{ErrorHandling, ErrorHandlingPrinciple}
 
 import scala.concurrent.ExecutionContext

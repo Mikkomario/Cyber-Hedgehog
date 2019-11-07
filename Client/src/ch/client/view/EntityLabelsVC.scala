@@ -37,7 +37,7 @@ class EntityLabelsVC(val entityTypeId: Int)(implicit context: ComponentContext, 
 	private val _view = Stack.buildColumn(margin = 0.fixed) { s =>
 		s += header
 		s += ScrollView.contextual(rowStack)
-		// TODO: Add new label -area
+		s += new AddEntityLabelVC().view
 	}
 	
 	private val contentManager = new StackContentManager[DescribedEntityLabel, EntityLabelRowVC](rowStack,
