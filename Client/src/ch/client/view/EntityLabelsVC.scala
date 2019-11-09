@@ -1,7 +1,7 @@
 package ch.client.view
 
 import utopia.reflection.shape.LengthExtensions._
-import ch.client.model.{ColorScheme, Margins, UserSettings}
+import ch.client.model.{ColorScheme, EditableLabel, Margins, UserSettings}
 import ch.client.util.Settings
 import ch.database.{Entities, Entity}
 import ch.model.DescribedEntityLabel
@@ -49,15 +49,15 @@ class EntityLabelsVC(val entityTypeId: Int)(implicit baseContextBuilder: Compone
 		s += new AddEntityLabelVC().view
 	}
 	
-	private val contentManager = new StackContentManager[DescribedEntityLabel, EntityLabelRowVC](rowStack,
+	private val contentManager = new StackContentManager[EditableLabel, EntityLabelRowVC](rowStack,
 		l => new EntityLabelRowVC(segmentGroup, l))
 	
 	
 	// INITIAL CODE	-------------------------------
 	
-	// Reads label data from DB and displays it
+	// Reads label data from DB and displays it in editable format
 	contentManager.content = Entities.labels.forTypeWithId(entityTypeId).get.map {
-		l => DescribedEntityLabel(l, Entity.label(l.id).descriptions(settings.languages.map { _.id })) }
+		l => DescribedEntityLabel(l, Entity.label(l.id).descriptions(settings.languages.map { _.id })) }.map { new EditableLabel(_) }
 	
 	
 	// IMPLEMENTED	-------------------------------

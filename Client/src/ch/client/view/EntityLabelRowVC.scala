@@ -1,10 +1,10 @@
 package ch.client.view
 
 import utopia.reflection.shape.LengthExtensions._
-import ch.client.model.UserSettings
+import ch.client.model.{EditableLabel, UndoListener, UserSettings}
 import ch.client.util.Settings
 import ch.model.DataType.{BooleanType, StringType}
-import ch.model.{DataType, DescribedEntityLabel}
+import ch.model.DataType
 import utopia.reflection.component.Refreshable
 import utopia.reflection.component.swing.{DropDown, StackableAwtComponentWrapperWrapper, Switch, TextField}
 import utopia.reflection.container.stack.StackLayout.Fit
@@ -18,9 +18,9 @@ import utopia.reflection.util.{ComponentContext, ComponentContextBuilder}
  * @author Mikko Hilpinen
  * @since 25.10.2019, v3+
  */
-class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: DescribedEntityLabel)
+class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: EditableLabel)
 					  (implicit context: ComponentContextBuilder, settings: UserSettings)
-	extends Refreshable[DescribedEntityLabel] with StackableAwtComponentWrapperWrapper
+	extends Refreshable[EditableLabel] with StackableAwtComponentWrapperWrapper
 {
 	// ATTRIBUTES	--------------------
 	
@@ -31,7 +31,7 @@ class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: Described
 	
 	private var _label = initialLabel
 	
-	private val labelNameField = TextField.contextual(initialText = _label.name.getOrElse(""),
+	private val labelNameField = TextField.contextual(initialText = _label.name,
 		prompt = Some[LocalizedString]("Name in %s").map { _.interpolate(settings.languages.head.localName) })
 	private val typeSelection = DropDown.contextual[DataType]("Select Type", DisplayFunction.localized[DataType] {
 		case StringType => "Text"
@@ -53,6 +53,15 @@ class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: Described
 	isEmailSwitch.isOn = _label.isEmail
 	isIdentifierSwitch.isOn = _label.isIdentifier
 	
+	// Records changes in the fields
+	labelNameField.addResultListener { name => _label.name = name.getOrElse("") }
+	typeSelection.addValueListener { _.newValue.foreach { newType => _label.dataType = newType } }
+	isEmailSwitch.addValueListener { c => _label.isEmail = c.newValue }
+	isIdentifierSwitch.addValueListener { c => _label.isIdentifier = c.newValue }
+	
+	// Listens to undo / redo changes in label
+	_label.addUndoListener(UndoHandler)
+	
 	
 	// COMPUTED	------------------------
 	
@@ -66,19 +75,35 @@ class EntityLabelRowVC(val segmentGroup: SegmentedGroup, initialLabel: Described
 	
 	override protected def wrapped = _view
 	
-	override def content_=(newContent: DescribedEntityLabel) =
+	override def content_=(newContent: EditableLabel) =
 	{
-		println("updating content")
+		// Stops listening to changes in the old label
+		_label.removeUndoListener(UndoHandler)
 		
-		// Updates local data
+		// Updates local data & UI
 		_label = newContent
-		
-		// Updates UI
-		labelNameField.text = _label.name.getOrElse("")
+		refreshUI()
+		_label.addUndoListener(UndoHandler)
+	}
+	
+	override def content = _label
+	
+	
+	// OTHER	-------------------
+	
+	private def refreshUI(): Unit =
+	{
+		labelNameField.text = _label.name
 		typeSelection.selectOne(_label.dataType)
 		isEmailSwitch.isOn = _label.isEmail
 		isIdentifierSwitch.isOn = _label.isIdentifier
 	}
 	
-	override def content = _label
+	
+	// NESTED	-------------------
+	
+	private object UndoHandler extends UndoListener
+	{
+		override def onDataChanged() = refreshUI()
+	}
 }
