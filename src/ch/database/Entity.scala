@@ -2,7 +2,7 @@ package ch.database
 
 import java.time.Instant
 
-import ch.model.DataSet
+import ch.model.{DataSet, DataType, EntityLabelConfiguration, EntityLabelDescription}
 import utopia.flow.datastructure.immutable.Value
 import utopia.vault.model.immutable.access.{IntIdAccess, ItemAccess, SingleAccess, SingleAccessWithIds, SingleIdAccess}
 import utopia.flow.generic.ValueConversions._
@@ -196,6 +196,11 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 			
 			private def nonDeprecatedDescriptionCondition = descriptionFactory.table("deprecatedAfter").isNull
 			
+			/**
+			 * @return Access point to individual descriptions under this label
+			 */
+			def description = Description
+			
 			
 			// OTHER	---------------
 			
@@ -204,9 +209,9 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 			 * @param connection DB Connection
 			 * @return This label's description in specified language. None if there's no description in that language.
 			 */
+			@deprecated("Replaced with description.withLanguage(Int)", "v3")
 			def descriptionWithLanguage(languageId: Int)(implicit connection: Connection) =
-				descriptionFactory.get(descriptionFactory.withLabelId(labelId).withLanguageId(languageId).toCondition &&
-					nonDeprecatedDescriptionCondition)
+				description.withLanguage(languageId)
 			
 			/**
 			 * Finds a description for this label from multiple language options
@@ -219,9 +224,67 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 			{
 				// Targets specific languages first
 				// If no description was found for any preferred language, returns all descriptions
-				preferredLanguages.findMap(descriptionWithLanguage).map { Vector(_) }.getOrElse {
+				preferredLanguages.findMap(description.withLanguage).map { Vector(_) }.getOrElse {
 					descriptionFactory.getMany(descriptionFactory.withLabelId(labelId).toCondition &&
 					nonDeprecatedDescriptionCondition) }
+			}
+			
+			/**
+			 * Inserts a new configuration for this label to DB
+			 * @param dataType New data type for this label
+			 * @param isIdentifier Whether this label should be treated as an identifier
+			 * @param isEmail Whether this label represents an email
+			 * @param connection DB Connection
+			 * @return Inserted model
+			 */
+			def insertConfiguration(dataType: DataType, isIdentifier: Boolean, isEmail: Boolean)(implicit connection: Connection) =
+			{
+				// Deprecates old configuration(s)
+				val updateTime = Instant.now()
+				connection(labelConfigurationFactory.deprecatedAfter(updateTime).toUpdateStatement() +
+					Where(labelConfigurationFactory.withLabelId(labelId).toCondition && nonDeprecatedLabelCondition))
+				
+				// Inserts a new configuration
+				val newId = labelConfigurationFactory.forInsert(labelId, dataType, isIdentifier, isEmail, updateTime).insert()
+				
+				// Returns copy of inserted model
+				EntityLabelConfiguration(newId.getInt, labelId, dataType, isIdentifier, isEmail, updateTime)
+			}
+			
+			
+			// NESTED	----------------
+			
+			object Description
+			{
+				/**
+				 * @param languageId Id of targeted language
+				 * @param connection DB Connection
+				 * @return This label's description in specified language. None if there's no description in that language.
+				 */
+				def withLanguage(languageId: Int)(implicit connection: Connection) = descriptionFactory.get(
+					descriptionFactory.withLabelId(labelId).withLanguageId(languageId).toCondition &&
+					nonDeprecatedDescriptionCondition)
+				
+				/**
+				 * Inserts a new description to the DB (deprecates previous versions)
+				 * @param languageId Id of target language
+				 * @param name Label name
+				 * @param description Label's description
+				 * @param connection DB Connection
+				 * @return Inserted description
+				 */
+				def insert(languageId: Int, name: String, description: Option[String])(implicit connection: Connection) =
+				{
+					// Deprecates old description version(s)
+					val updateTime = Instant.now()
+					connection(descriptionFactory.deprecatedAfter(updateTime).toUpdateStatement() +
+						Where(descriptionFactory.withLangaugeId(languageId).toCondition && nonDeprecatedDescriptionCondition))
+					// Inserts a new description
+					val newId = descriptionFactory.forInsert(labelId, name, description, languageId, updateTime).insert()
+					
+					// Returns a copy of inserted model
+					EntityLabelDescription(newId.getInt, labelId, name, description, languageId, updateTime)
+				}
 			}
 		}
 	}

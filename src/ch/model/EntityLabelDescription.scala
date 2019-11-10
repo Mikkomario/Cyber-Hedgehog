@@ -14,7 +14,7 @@ import java.time.Instant
  * @param deprecatedAfter Time after which this description became deprecated (was replaced with a new version)
  */
 case class EntityLabelDescription(id: Int, labelId: Int, name: String, description: Option[String], languageId: Int,
-								  created: Instant, deprecatedAfter: Option[Instant])
+								  created: Instant, deprecatedAfter: Option[Instant] = None)
 {
 	/**
 	 * @return Whether this description should be considered deprecated

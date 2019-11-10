@@ -40,31 +40,29 @@ object CyberHedgehogClient extends App
 	
 	implicit val exc: ExecutionContext = ThreadPool.executionContext
 	val actorHandler = ActorHandler()
-	ConnectionPool { implicit connection =>
-		
-		// Reads language data from DB
-		val languages = Vector(Language.forCode("en"), Language.forCode("fi")).flatten
-		
-		// Sets up settings
-		implicit val settings: UserSettings = UserSettings(languages)
-		implicit val baseContextBuilder: ComponentContextBuilder = ComponentContextBuilder(actorHandler, Font("Arial", 18),
-			colorScheme.secondary, colorScheme.secondary.light, 320, insideMargins = margins.mini.any.square,
-			borderWidth = Some(4), stackMargin = margins.medium.downscaling,
-			relatedItemsStackMargin = Some(margins.small.downscaling), switchWidth = Some(StackLength(32, 48, 64)),
-			scrollBarWidth = 16, scrollBarIsInsideContent = true)
-		implicit val baseContext: ComponentContext = baseContextBuilder.result
-		
-		// Creates UI
-		val content = new EntityLabelsVC(1)
-		
-		val actionLoop = new ActorLoop(actorHandler)
-		val frame = Frame.windowed(content, "Cyber Hedgehog Client", User)
-		frame.setToExitOnClose()
-		
-		actionLoop.registerToStopOnceJVMCloses()
-		actionLoop.startAsync()
-		StackHierarchyManager.startRevalidationLoop()
-		frame.startEventGenerators(actorHandler)
-		frame.isVisible = true
-	}
+	
+	// Reads some settings from DB before starting
+	val languages = ConnectionPool { implicit connection => Vector(Language.forCode("en"), Language.forCode("fi")).flatten }
+	
+	// Sets up settings
+	implicit val settings: UserSettings = UserSettings(languages)
+	implicit val baseContextBuilder: ComponentContextBuilder = ComponentContextBuilder(actorHandler, Font("Arial", 18),
+		colorScheme.secondary, colorScheme.secondary.light, 320, insideMargins = margins.mini.any.square,
+		borderWidth = Some(4), stackMargin = margins.medium.downscaling,
+		relatedItemsStackMargin = Some(margins.small.downscaling), switchWidth = Some(StackLength(32, 48, 64)),
+		scrollBarWidth = 16, scrollBarIsInsideContent = true)
+	implicit val baseContext: ComponentContext = baseContextBuilder.result
+	
+	// Creates UI
+	val content = new EntityLabelsVC(1)
+	
+	val actionLoop = new ActorLoop(actorHandler)
+	val frame = Frame.windowed(content, "Cyber Hedgehog Client", User)
+	frame.setToExitOnClose()
+	
+	actionLoop.registerToStopOnceJVMCloses()
+	actionLoop.startAsync()
+	StackHierarchyManager.startRevalidationLoop()
+	frame.startEventGenerators(actorHandler)
+	frame.isVisible = true
 }

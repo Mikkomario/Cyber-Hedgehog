@@ -26,6 +26,30 @@ object EntityLabelDescription extends StorableFactoryWithValidation[ch.model.Ent
 	 * @return A model with only label id set
 	 */
 	def withLabelId(labelId: Int) = EntityLabelDescription(labelId = Some(labelId))
+	
+	/**
+	 * @param languageId Id of targeted language
+	 * @return A model with only language id set
+	 */
+	def withLangaugeId(languageId: Int) = EntityLabelDescription(languageId = Some(languageId))
+	
+	/**
+	 * @param deprecationTime Time when this description was deprecated
+	 * @return A model with only deprecation time set
+	 */
+	def deprecatedAfter(deprecationTime: Instant) = EntityLabelDescription(deprecatedAfter = Some(deprecationTime))
+	
+	/**
+	 * Creates a new description ready to be inserted to DB
+	 * @param labelId Id of targeted label
+	 * @param name New label name in target language
+	 * @param description New label description in target language
+	 * @param languageId Id of targeted language
+	 * @param created Creation time for this label
+	 * @return A new label description
+	 */
+	def forInsert(labelId: Int, name: String, description: Option[String], languageId: Int, created: Instant) =
+		EntityLabelDescription(None, Some(labelId), Some(name), description, Some(languageId), Some(created))
 }
 
 /**

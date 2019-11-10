@@ -2,15 +2,26 @@ package ch.client.model
 
 import utopia.flow.util.CollectionExtensions._
 import ch.model.{DataType, DescribedEntityLabel}
+import utopia.flow.event.ChangeListener
 
 /**
  * This version of label is mutable and editable by the user, it contains all changes until they are uploaded
  * @author Mikko Hilpinen
  * @since 9.11.2019, v3+
  */
-class EditableLabel(val original: DescribedEntityLabel)
+class EditableLabel(val original: DescribedEntityLabel)(implicit settings: UserSettings)
 {
 	// ATTRIBUTES	---------------------
+	
+	/**
+	 * Language of this label's description
+	 */
+	val languageId = original.descriptions.headOption.map { _.languageId }.orElse { settings.languages.headOption.map { _.id } }
+	/**
+	 * Current description for this label
+	 */
+		// TODO: Not yet editable
+	val description = original.description
 	
 	private val _name = new ChangeList(original.name.getOrElse(""))
 	private val _type = new ChangeList(original.dataType)
@@ -23,6 +34,11 @@ class EditableLabel(val original: DescribedEntityLabel)
 	
 	
 	// COMPUTED	-------------------------
+	
+	/**
+	 * @return Id of this label
+	 */
+	def id = original.label.id
 	
 	/**
 	 * @return Current label name
@@ -49,6 +65,14 @@ class EditableLabel(val original: DescribedEntityLabel)
 	def isIdentifier_=(isIdentifier: Boolean) = _isIdentifier.set(isIdentifier)
 	
 	/**
+	 * @return Whether this label has changed from its original
+	 */
+	def isChanged = fields.exists { _.isChanged }
+	/**
+	 * @return Whether this label's latest undone change can still be redone
+	 */
+	def isRedoable = fields.exists { _.isRedoable }
+	/**
 	 * @return Last time a value in this label was changed
 	 */
 	def lastChangeTime = fields.flatMap { _.lastChangeTime }.maxOption
@@ -56,6 +80,16 @@ class EditableLabel(val original: DescribedEntityLabel)
 	 * @return Last time a change in this label was undone (only returns times for changes that can be redone)
 	 */
 	def lastUndoTime = fields.flatMap { _.lastUndoTime }.maxOption
+	
+	/**
+	 * @return Whether there's a changed label description available
+	 */
+	def descriptionIsChanged = _name.isChanged
+	
+	/**
+	 * @return Whether there's a changed label configuration available
+	 */
+	def configurationIsChanged = Vector(_type, _isEmail, _isIdentifier).exists { _.isChanged }
 	
 	
 	// OTHER	-------------------------
@@ -99,4 +133,16 @@ class EditableLabel(val original: DescribedEntityLabel)
 	 * @param listener A listener no longer interested in changes
 	 */
 	def removeUndoListener(listener: UndoListener) = undoListeners = undoListeners.filterNot { _ == listener }
+	
+	/**
+	 * Registers a change listener to be informed of all changes in this label
+	 * @param listener A change listener
+	 */
+	def addChangeListener(listener: ChangeListener[Any]) = fields.foreach { _.addListener(listener) }
+	
+	/**
+	 * Unregisters a change listener
+	 * @param listener A change listener to be removed
+	 */
+	def removeChangeListener(listener: Any) = fields.foreach { _.removeListener(listener) }
 }

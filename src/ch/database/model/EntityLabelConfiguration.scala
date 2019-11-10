@@ -46,6 +46,30 @@ object EntityLabelConfiguration extends StorableFactory[ch.model.EntityLabelConf
 	 * @return A model where isEmail is set to true
 	 */
 	def email = apply(isEmail = Some(true))
+	
+	/**
+	 * @param labelId Id of targeted label
+	 * @return A new model with only label id set
+	 */
+	def withLabelId(labelId: Int) = EntityLabelConfiguration(labelId = Some(labelId))
+	
+	/**
+	 * @param deprecationTime Time when label became deprecated
+	 * @return A model with only deprecation time set
+	 */
+	def deprecatedAfter(deprecationTime: Instant) = EntityLabelConfiguration(deprecatedAfter = Some(deprecationTime))
+	
+	/**
+	 * Creates a new model ready to be inserted
+	 * @param labelId Id of targeted label
+	 * @param dataType New data type of label
+	 * @param isIdentifier Whether label should be identifier
+	 * @param isEmail Whether label should be email
+	 * @param created Creation time of label
+	 * @return A new model ready to be inserted
+	 */
+	def forInsert(labelId: Int, dataType: DataType, isIdentifier: Boolean, isEmail: Boolean, created: Instant = Instant.now()) =
+		EntityLabelConfiguration(None, Some(labelId), Some(dataType), Some(isIdentifier), Some(isEmail), Some(created))
 }
 
 /**

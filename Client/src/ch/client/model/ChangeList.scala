@@ -2,13 +2,15 @@ package ch.client.model
 
 import java.time.Instant
 
+import utopia.flow.event.Changing
+
 /**
  * This mutable value keeps track of all changes and can undo or redo them when requested
  * @author Mikko Hilpinen
  * @since 9.11.2019, v3+
  * @param original The original (immutable) value
  */
-class ChangeList[A](private val original: A)
+class ChangeList[A](private val original: A) extends Changing[A]
 {
 	// ATTRIBUTES	----------------------
 	
@@ -33,6 +35,20 @@ class ChangeList[A](private val original: A)
 	 */
 	def lastUndoTime = lastUndos.lastOption.map { _._2 }
 	
+	/**
+	 * @return Whether this value has changed from its original
+	 */
+	def isChanged = activeChanges.nonEmpty
+	/**
+	 * @return Whether this list is in a state where redo is available
+	 */
+	def isRedoable = lastUndos.nonEmpty
+	
+	
+	// IMPLEMENTED	----------------------
+	
+	override def value = current
+	
 
 	// OTHER	--------------------------
 	
@@ -44,9 +60,11 @@ class ChangeList[A](private val original: A)
 		// Will not record changes that don't alter the value
 		if (!activeChanges.lastOption.contains(newValue))
 		{
+			val oldValue = current
 			activeChanges :+= (newValue, Instant.now())
 			// Redo becomes unavailable after field has been changed again
 			lockChanges()
+			fireChangeEvent(oldValue)
 		}
 	}
 	
@@ -57,9 +75,11 @@ class ChangeList[A](private val original: A)
 	{
 		if (activeChanges.nonEmpty)
 		{
+			val oldValue = current
 			val undone = activeChanges.last._1
 			activeChanges = activeChanges.dropRight(1)
 			lastUndos :+= (undone, Instant.now())
+			fireChangeEvent(oldValue)
 		}
 	}
 	
@@ -68,11 +88,14 @@ class ChangeList[A](private val original: A)
 	 */
 	def redo() =
 	{
+		// TODO: WET WET
 		if (lastUndos.nonEmpty)
 		{
+			val oldValue = current
 			val redone = lastUndos.last._1
 			lastUndos = lastUndos.dropRight(1)
 			activeChanges :+= (redone, Instant.now())
+			fireChangeEvent(oldValue)
 		}
 	}
 	
