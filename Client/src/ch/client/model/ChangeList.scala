@@ -58,7 +58,7 @@ class ChangeList[A](private val original: A) extends Changing[A]
 	def set(newValue: A) =
 	{
 		// Will not record changes that don't alter the value
-		if (!activeChanges.lastOption.contains(newValue))
+		if (current != newValue)
 		{
 			val oldValue = current
 			activeChanges :+= (newValue, Instant.now())

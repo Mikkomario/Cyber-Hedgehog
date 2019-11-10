@@ -1,5 +1,7 @@
 package ch.client.view
 
+import java.awt.event.KeyEvent
+
 import utopia.flow.util.CollectionExtensions._
 import utopia.reflection.shape.LengthExtensions._
 import ch.client.model.{ColorScheme, EditableLabel, Margins, UserSettings}
@@ -10,6 +12,8 @@ import ch.util.Log
 import utopia.flow.datastructure.mutable.PointerWithEvents
 import utopia.flow.event.{ChangeEvent, ChangeListener, Changing}
 import utopia.genesis.color.Color
+import utopia.genesis.event.KeyStateEvent
+import utopia.genesis.handling.KeyStateListener
 import utopia.genesis.shape.Axis.X
 import utopia.reflection.component.swing.StackableAwtComponentWrapperWrapper
 import utopia.reflection.component.swing.label.TextLabel
@@ -98,6 +102,8 @@ class EntityLabelsVC(val entityTypeId: Int)(implicit baseContextBuilder: Compone
 	contentManager.content = labels
 	// Listens to changes in labels
 	labels.foreach { _.addChangeListener(LabelChangeHandler) }
+	// Listens to key events
+	addKeyStateListener(KeyHandler)
 	
 	
 	// IMPLEMENTED	-------------------------------
@@ -152,6 +158,23 @@ class EntityLabelsVC(val entityTypeId: Int)(implicit baseContextBuilder: Compone
 		{
 			_hasChanged.value = labels.exists { _.isChanged }
 			_isRedoable.value = labels.exists { _.isRedoable }
+		}
+	}
+	
+	object KeyHandler extends KeyStateListener with utopia.inception.handling.immutable.Handleable
+	{
+		// Is only interested in ctrl combo keys
+		override def keyStateEventFilter = KeyStateEvent.wasPressedFilter && KeyStateEvent.controlDownFilter
+		
+		override def onKeyState(event: KeyStateEvent) = event.index match
+		{
+			case KeyEvent.VK_Z =>
+				if (event.keyStatus(KeyEvent.VK_SHIFT))
+					redo() // Ctrl + Shift + Z = Redo
+				else
+					undo() // Ctrl + Z = Undo
+			case KeyEvent.VK_P => push() // Ctrl + P = Push
+			case _ => Unit
 		}
 	}
 }
