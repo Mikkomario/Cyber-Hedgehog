@@ -60,7 +60,7 @@ class EntityLabelsVC(val entityTypeId: Int)(implicit baseContextBuilder: Compone
 		s += new AddEntityLabelVC().view
 	}
 	
-	private val contentManager = new StackContentManager[EditableLabel, EntityLabelRowVC](rowStack,
+	private val contentManager = new StackContentManager[EditableLabel, EntityLabelRowVC](rowStack)(
 		l => new EntityLabelRowVC(segmentGroup, l))
 	
 	// Label data is read from DB
