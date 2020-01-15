@@ -67,9 +67,13 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 		/**
 		 * Used for accessing fields under a service
 		 */
-		class ServiceFieldsAccess extends ConditionalManyAccess[ch.granite.model.Field](fieldServiceCondition, fieldFactory)
+		class ServiceFieldsAccess extends ConditionalManyAccess[ch.granite.model.Field]
 		{
 			// COMPUTED	----------------
+			
+			override def condition = fieldServiceCondition
+			
+			override def factory = fieldFactory
 			
 			/**
 			 * @return Access point to all mappings linked to these fields
@@ -82,9 +86,17 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 			/**
 			 * Used for accessing field label mappings under a service
 			 */
-			class ServiceFieldMappingsAccess extends ConditionalManyAccess[ch.granite.model.FieldLabelMapping](
-				fieldServiceCondition && notDeprecatedCondition, fieldMappingFactory)
+			class ServiceFieldMappingsAccess extends ConditionalManyAccess[ch.granite.model.FieldLabelMapping]
 			{
+				// IMPLEMENTED	-----------------
+				
+				override def condition = fieldServiceCondition && notDeprecatedCondition
+				
+				override def factory = fieldMappingFactory
+				
+				
+				// OTHER	---------------------
+				
 				/**
 				 * Searches mappings for a specific entity type
 				 * @param typeId Id of searched entity type
@@ -99,10 +111,13 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 		/**
 		 * Used for accessing selection options under a service
 		 */
-		class ServiceOptionsAccess extends ConditionalManyAccess[ch.granite.model.SelectOption](fieldServiceCondition,
-			optionFactory)
+		class ServiceOptionsAccess extends ConditionalManyAccess[ch.granite.model.SelectOption]
 		{
 			// COMPUTED	------------------
+			
+			override def condition = fieldServiceCondition
+			
+			override def factory = optionFactory
 			
 			/**
 			 * @return Access point to all option to label mappings linked to these options
@@ -120,9 +135,12 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 			/**
 			 * Used for accessing option label mappings under a service
 			 */
-			class ServiceOptionMappingAccess extends ConditionalManyAccess[ch.granite.model.OptionLabelMapping](
-				fieldServiceCondition && notDeprecatedCondition, optionMappingFactory)
+			class ServiceOptionMappingAccess extends ConditionalManyAccess[ch.granite.model.OptionLabelMapping]
 			{
+				override def condition = fieldServiceCondition && notDeprecatedCondition
+				
+				override def factory = optionMappingFactory
+				
 				/**
 				 * Searches for mappings linked to specific entity type
 				 * @param typeId Id of targeted entity type
@@ -136,9 +154,12 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 			/**
 			 * Used for accessing option link type mappings under a service
 			 */
-			class ServiceOptionLinkMappingAccess extends ConditionalManyAccess[ch.granite.model.LinkTypeMapping](
-				fieldServiceCondition, linkMappingFactory)
+			class ServiceOptionLinkMappingAccess extends ConditionalManyAccess[ch.granite.model.LinkTypeMapping]
 			{
+				override def condition = fieldServiceCondition
+				
+				override def factory = linkMappingFactory
+				
 				/**
 				 * Searches for link type mappings that originate from a specific type of entity
 				 * @param typeId Id of targeted entity type

@@ -21,8 +21,8 @@ import utopia.reflection.container.stack.segmented.SegmentedGroup
 import utopia.reflection.container.swing.{AwtContainerRelated, ScrollView, SegmentedRow, Stack}
 import utopia.reflection.controller.data.StackContentManager
 import utopia.reflection.localization.Localizer
+import utopia.reflection.shape.Alignment.Center
 import utopia.reflection.shape.StackLength
-import utopia.reflection.util.Alignment.Center
 import utopia.reflection.util.{ComponentContext, ComponentContextBuilder}
 import utopia.vault.database.Connection
 

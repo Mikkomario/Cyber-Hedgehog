@@ -146,9 +146,12 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 	
 	// NESTED	--------------------------
 	
-	class EntitiesOfType(typeId: Int) extends ConditionalManyAccess[ch.model.Entity](
-		factory.withTypeId(typeId).toCondition, factory)
+	class EntitiesOfType(typeId: Int) extends ConditionalManyAccess[ch.model.Entity]
 	{
+		override def condition = factory.withTypeId(typeId).toCondition
+		
+		override def factory = Entities.factory
+		
 		/**
 		 * Reads entities that work within specified parent entities
 		 * @param parentEntityIds Ids of parent entities

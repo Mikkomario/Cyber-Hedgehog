@@ -16,7 +16,7 @@ import utopia.reflection.container.stack.StackLayout
 import utopia.reflection.container.stack.segmented.SegmentedGroup
 import utopia.reflection.container.swing.{SegmentedRow, Stack}
 import utopia.reflection.localization.{DisplayFunction, LocalizedString, Localizer}
-import utopia.reflection.util.Alignment.Center
+import utopia.reflection.shape.Alignment.Center
 import utopia.reflection.util.{ComponentContext, ComponentContextBuilder}
 
 /**
