@@ -19,7 +19,9 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 {
 	// COMPUTED	-----------------------
 	
-	private def targetEntityColumn = table("includedEntity")
+	private def segmentContentTable = Tables.segmentContent
+	
+	private def targetEntityColumn = segmentContentTable("includedEntity")
 	
 	
 	// IMPLEMENTED	-------------------
@@ -151,7 +153,7 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 		  */
 		def contentIds(implicit connection: Connection) =
 		{
-			connection(Select(Tables.segmentContent, targetEntityColumn) +
+			connection(Select(segmentContentTable, targetEntityColumn) +
 				Where(SegmentContent.withProfilingId(id).toCondition)).rowIntValues
 		}
 	}

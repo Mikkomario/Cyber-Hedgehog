@@ -86,6 +86,6 @@ case class EntityLabelConfiguration(id: Option[Int] = None, labelId: Option[Int]
 	override def factory = EntityLabelConfiguration
 	
 	override def valueProperties = Vector("id" -> id, "label" -> labelId,
-		"dataType" -> dataType.map { _.toInt }, "isIdentifier" -> isIdentifier, "email" -> isEmail,
+		"dataType" -> dataType.map { _.toInt }, "isIdentifier" -> isIdentifier, "isEmail" -> isEmail,
 		"created" -> created, "deprecatedAfter" -> deprecatedAfter)
 }

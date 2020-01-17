@@ -12,6 +12,7 @@ import utopia.genesis.handling.mutable.ActorHandler
 import utopia.reflection.container.stack.StackHierarchyManager
 import utopia.reflection.container.swing.window.Frame
 import utopia.reflection.container.swing.window.WindowResizePolicy.User
+import utopia.reflection.localization.{Localizer, NoLocalization}
 import utopia.reflection.shape.StackLength
 import utopia.reflection.text.Font
 import utopia.reflection.util.{ComponentContext, ComponentContextBuilder}
@@ -27,6 +28,9 @@ import scala.concurrent.ExecutionContext
 object CyberHedgehogClient extends App
 {
 	DataType.setup()
+	
+	implicit val sourceLanguageCode: String = "en"
+	implicit val localizer: Localizer = NoLocalization
 	
 	// Test version
 	implicit val colorScheme: ColorScheme = ColorScheme(
