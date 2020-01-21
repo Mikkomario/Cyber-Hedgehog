@@ -130,6 +130,7 @@ object ReadGraniteData
 	{
 		// First reads all response meta data and checks if there are some that were recently created
 		val request = new Request(listResponsesForServiceUri(serviceId), headers = Headers().withBasicAuthorization(user, password))
+		// println(s"Sending request: $request")
 		val responseReceive = Gateway.getStringResponse(request)
 		
 		responseReceive.waitFor(GraniteSettings.requestTimeoutSeconds.seconds).flatMap { response =>
@@ -142,6 +143,7 @@ object ReadGraniteData
 					val model = result.getModel
 					val id = model("id").int
 					val created = model("created").instant
+					// println(s"Found result: $id (created: ${created.map { _.toLocalDateTime.toString }})")
 					
 					if (id.isEmpty || created.isEmpty)
 						Log.warning(s"Unexpected result when reading results from granite. Expected model to have 'id' and 'created'. Instead received $model")
@@ -149,7 +151,10 @@ object ReadGraniteData
 					if (id.isDefined && created.isDefined && lastReadTime.forall { last => created.get > last  })
 						Some(id.get -> created.get)
 					else
+					{
+						// println("Result was skipped")
 						None
+					}
 					
 					// Sorts results based on creation time
 				}.sortBy { _._2 }.map { _._1 }
