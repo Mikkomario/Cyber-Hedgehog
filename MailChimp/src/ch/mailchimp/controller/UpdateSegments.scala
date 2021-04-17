@@ -1,6 +1,6 @@
 package ch.mailchimp.controller
 
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import ch.database.{Entities, Entity, Profiling}
 import ch.mailchimp.database.SegmentUpdate
 import ch.mailchimp.model.{APIConfiguration, ContactList, ContactSegment}

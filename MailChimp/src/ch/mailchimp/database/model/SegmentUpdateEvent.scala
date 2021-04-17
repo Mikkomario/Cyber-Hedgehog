@@ -7,9 +7,9 @@ import ch.mailchimp.database.Tables
 import utopia.flow.datastructure.immutable
 import utopia.flow.datastructure.immutable.Constant
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
-object SegmentUpdateEvent extends StorableFactoryWithValidation[ch.mailchimp.model.SegmentUpdateEvent]
+object SegmentUpdateEvent extends FromValidatedRowModelFactory[ch.mailchimp.model.SegmentUpdateEvent]
 {
 	// IMPLEMENTED	--------------------
 	

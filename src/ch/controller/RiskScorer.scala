@@ -41,7 +41,7 @@ object RiskScorer
 				if (updatedEntityIds.nonEmpty)
 				{
 					// Updates scoring for all affected entities
-					Algorithm.withId(currentAlgorithmId).foreach { algorithm =>
+					Algorithm(currentAlgorithmId).foreach { algorithm =>
 						
 						// Saves a new scoring event first
 						val newEvent = RiskScoringEvent.insert(currentAlgorithmId)

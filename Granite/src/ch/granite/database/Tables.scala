@@ -1,6 +1,6 @@
 package ch.granite.database
 
-import utopia.vault.database
+import ch.database
 
 /**
   * Contains all tables used by granite interface (only)

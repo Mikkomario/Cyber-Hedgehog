@@ -6,9 +6,9 @@ import ch.database.Tables
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
 import utopia.flow.generic.ValueConversions._
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
-object DataRead extends StorableFactoryWithValidation[ch.model.DataRead]
+object DataRead extends FromValidatedRowModelFactory[ch.model.DataRead]
 {
 	// IMPLEMENTED	----------------------
 	

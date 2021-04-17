@@ -1,9 +1,8 @@
 package ch.granite.database
 
-import utopia.flow.generic.ValueConversions._
 import ch.granite.database.model.SelectOption
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.ManyAccess
+import utopia.vault.nosql.access.ManyRowModelAccess
 import utopia.vault.sql.SelectDistinct
 
 /**
@@ -11,11 +10,11 @@ import utopia.vault.sql.SelectDistinct
   * @author Mikko Hilpinen
   * @since 14.7.2019, v0.1+
   */
-object Fields extends ManyAccess[Int, ch.granite.model.Field]
+object Fields extends ManyRowModelAccess[ch.granite.model.Field]
 {
 	// IMPLEMENTED	--------------
 	
-	override protected def idValue(id: Int) = id
+	override def globalCondition = None
 	
 	override def factory = model.Field
 	
@@ -61,11 +60,11 @@ object Fields extends ManyAccess[Int, ch.granite.model.Field]
 	
 	// NESTED	------------------
 	
-	object Options extends ManyAccess[Int, ch.granite.model.SelectOption]
+	object Options extends ManyRowModelAccess[ch.granite.model.SelectOption]
 	{
 		// IMPLEMENTED	----------
 		
-		override protected def idValue(id: Int) = id
+		override def globalCondition = None
 		
 		override def factory = model.SelectOption
 		

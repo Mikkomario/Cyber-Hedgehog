@@ -1,18 +1,17 @@
 package ch.database
 
 import java.time.Instant
-
 import ch.model.{DataSet, DataType, EntityLabelConfiguration, EntityLabelDescription}
 import utopia.flow.datastructure.immutable.Value
-import utopia.vault.model.immutable.access.{IntIdAccess, ItemAccess, SingleAccess, SingleAccessWithIds, SingleIdAccess}
 import utopia.flow.generic.ValueConversions._
 import utopia.flow.util.CollectionExtensions._
 import utopia.flow.parse.JSONReader
 import utopia.vault.sql.Extensions._
 import utopia.vault.database.Connection
+import utopia.vault.nosql.access.{SingleIdModelAccess, SingleIntIdAccess, SingleModelAccessById}
 import utopia.vault.sql.{Limit, MaxBy, OrderBy, Select, Where}
 
-object EntityId extends SingleIdAccess[Int] with IntIdAccess
+object EntityId extends SingleIntIdAccess
 {
 	// COMPUTED	-------------------------
 	
@@ -23,6 +22,10 @@ object EntityId extends SingleIdAccess[Int] with IntIdAccess
 	
 	
 	// IMPLEMENTED	---------------------
+	
+	override def target = table
+	
+	override def globalCondition = None
 	
 	override def table = model.Entity.table
 	
@@ -48,7 +51,7 @@ object EntityId extends SingleIdAccess[Int] with IntIdAccess
  * @author Mikko Hilpinen
  * @since 5.10.2019, v2+
  */
-object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
+object Entity extends SingleModelAccessById[ch.model.Entity, Int]
 {
 	// COMPUTED	-------------------------
 	
@@ -76,6 +79,11 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 	private def nonDeprecatedLinkCondition = linkDeprecatedColumn.isNull
 	
 	/**
+	 * @return An access point to individual entity ids
+	 */
+	def id = EntityId
+	
+	/**
 	 * @return Access point to individual entity labels
 	 */
 	def label = Label
@@ -89,11 +97,9 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 	
 	// IMPLEMENTED	---------------------
 	
-	override protected def idValue(id: Int) = id
+	override def idToValue(id: Int) = id
 	
 	override def factory = model.Entity
-	
-	override def id = EntityId
 	
 	override def apply(id: Int) = new SingleEntity(id)
 	
@@ -116,7 +122,7 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 	
 	// NESTED	------------------------
 	
-	class SingleEntity(id: Int) extends ItemAccess[ch.model.Entity](id, factory)
+	class SingleEntity(id: Int) extends SingleIdModelAccess[ch.model.Entity](id, factory)
 	{
 		// COMPUTED	--------------------
 		
@@ -175,11 +181,11 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 			readFactory.getMax(readTimeColumn, readTargetCondition && readTimeColumn > timeThreshold)
 	}
 	
-	object Label extends SingleAccess[Int, ch.model.EntityLabel]
+	object Label extends SingleModelAccessById[ch.model.EntityLabel, Int]
 	{
 		// IMPLEMENTED	----------------
 		
-		override protected def idValue(id: Int) = id
+		override def idToValue(id: Int) = id
 		
 		override def factory = model.EntityLabel
 		
@@ -188,7 +194,8 @@ object Entity extends SingleAccessWithIds[Int, ch.model.Entity, EntityId.type]
 		
 		// NESTED	-------------------
 		
-		class SingleLabelAccess(val labelId: Int) extends ItemAccess[ch.model.EntityLabel](labelId, factory)
+		class SingleLabelAccess(val labelId: Int)
+			extends SingleIdModelAccess[ch.model.EntityLabel](labelId, factory)
 		{
 			// COMPUTED	---------------
 			

@@ -4,7 +4,7 @@ import java.time.Instant
 
 import utopia.flow.util.CollectionExtensions._
 import utopia.flow.async.AsyncExtensions._
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import ch.database.ConnectionPool
 import ch.mailchimp.controller.UpdateContacts
 import ch.mailchimp.model.APIConfiguration

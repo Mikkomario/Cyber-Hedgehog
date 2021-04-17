@@ -4,7 +4,7 @@ import ch.database.Tables
 import ch.model
 import ch.model.EntityLabelGroupConnection
 import utopia.flow.datastructure.immutable.{Constant, Model, Value}
-import utopia.vault.model.immutable.factory.MultiLinkedStorableFactory
+import utopia.vault.nosql.factory.PossiblyMultiLinkedFactory
 import utopia.flow.util.CollectionExtensions._
 
 /**
@@ -12,7 +12,7 @@ import utopia.flow.util.CollectionExtensions._
  * @author Mikko Hilpinen
  * @since 21.8.2019, v1.1+
  */
-object EntityLabelGroup extends MultiLinkedStorableFactory[model.EntityLabelGroup,
+object EntityLabelGroup extends PossiblyMultiLinkedFactory[model.EntityLabelGroup,
 	model.EntityLabelGroupConnection]
 {
 	override def table = Tables.entityLabelGroup

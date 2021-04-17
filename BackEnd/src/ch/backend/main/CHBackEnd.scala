@@ -1,6 +1,6 @@
 package ch.backend.main
 
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
 import utopia.flow.util.CollectionExtensions._
 import ch.backend.controller.UpdateOnce

@@ -1,7 +1,7 @@
 package ch.backend.controller
 
 import utopia.flow.util.CollectionExtensions._
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
 import ch.controller.Profiler
 import ch.granite.controller.ReadGraniteData

@@ -3,18 +3,18 @@ package ch.granite.database
 import utopia.flow.generic.ValueConversions._
 import ch.database.model.{EntityLabel, EntityLabelConfiguration}
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.{ConditionalManyAccess, ItemAccess, SingleAccess}
+import utopia.vault.nosql.access.{ManyRowModelAccess, SingleIdModelAccess, SingleModelAccessById}
 
 /**
  * Used for accessing individual Granite service's data
  * @author Mikko Hilpinen
  * @since 7.10.2019, v2+
  */
-object Service extends SingleAccess[Int, ch.granite.model.Service]
+object Service extends SingleModelAccessById[ch.granite.model.Service, Int]
 {
 	// IMPLEMENTED	--------------------
 	
-	override protected def idValue(id: Int) = id
+	override def idToValue(id: Int) = id
 	
 	override def factory = model.Service
 	
@@ -27,7 +27,7 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 	 * Used for accessing an individual service's data
 	 * @param id Service id
 	 */
-	class SingleService(id: Int) extends ItemAccess[ch.granite.model.Service](id, factory)
+	class SingleService(id: Int) extends SingleIdModelAccess[ch.granite.model.Service](id, factory)
 	{
 		// COMPUTED	--------------------
 		
@@ -67,11 +67,11 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 		/**
 		 * Used for accessing fields under a service
 		 */
-		class ServiceFieldsAccess extends ConditionalManyAccess[ch.granite.model.Field]
+		class ServiceFieldsAccess extends ManyRowModelAccess[ch.granite.model.Field]
 		{
 			// COMPUTED	----------------
 			
-			override def condition = fieldServiceCondition
+			override def globalCondition = Some(fieldServiceCondition)
 			
 			override def factory = fieldFactory
 			
@@ -86,11 +86,16 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 			/**
 			 * Used for accessing field label mappings under a service
 			 */
-			class ServiceFieldMappingsAccess extends ConditionalManyAccess[ch.granite.model.FieldLabelMapping]
+			class ServiceFieldMappingsAccess extends ManyRowModelAccess[ch.granite.model.FieldLabelMapping]
 			{
+				// COMPUTED	---------------------
+				
+				private def condition = fieldServiceCondition && notDeprecatedCondition
+				
+				
 				// IMPLEMENTED	-----------------
 				
-				override def condition = fieldServiceCondition && notDeprecatedCondition
+				override def globalCondition = Some(condition)
 				
 				override def factory = fieldMappingFactory
 				
@@ -111,11 +116,11 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 		/**
 		 * Used for accessing selection options under a service
 		 */
-		class ServiceOptionsAccess extends ConditionalManyAccess[ch.granite.model.SelectOption]
+		class ServiceOptionsAccess extends ManyRowModelAccess[ch.granite.model.SelectOption]
 		{
 			// COMPUTED	------------------
 			
-			override def condition = fieldServiceCondition
+			override def globalCondition = Some(fieldServiceCondition)
 			
 			override def factory = optionFactory
 			
@@ -135,9 +140,11 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 			/**
 			 * Used for accessing option label mappings under a service
 			 */
-			class ServiceOptionMappingAccess extends ConditionalManyAccess[ch.granite.model.OptionLabelMapping]
+			class ServiceOptionMappingAccess extends ManyRowModelAccess[ch.granite.model.OptionLabelMapping]
 			{
-				override def condition = fieldServiceCondition && notDeprecatedCondition
+				private def condition = fieldServiceCondition && notDeprecatedCondition
+				
+				override def globalCondition = Some(condition)
 				
 				override def factory = optionMappingFactory
 				
@@ -154,9 +161,9 @@ object Service extends SingleAccess[Int, ch.granite.model.Service]
 			/**
 			 * Used for accessing option link type mappings under a service
 			 */
-			class ServiceOptionLinkMappingAccess extends ConditionalManyAccess[ch.granite.model.LinkTypeMapping]
+			class ServiceOptionLinkMappingAccess extends ManyRowModelAccess[ch.granite.model.LinkTypeMapping]
 			{
-				override def condition = fieldServiceCondition
+				override def globalCondition = Some(fieldServiceCondition)
 				
 				override def factory = linkMappingFactory
 				

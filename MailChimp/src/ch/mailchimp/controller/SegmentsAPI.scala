@@ -7,6 +7,7 @@ import utopia.access.http.StatusGroup
 import utopia.flow.datastructure.immutable.Model
 
 import scala.concurrent.ExecutionContext
+import scala.util.{Failure, Success}
 
 /**
   * Used for interacting with MailChimp API segments
@@ -31,10 +32,12 @@ object SegmentsAPI
 	{
 		// Makes the post
 		API.post(s"lists/${list.mailChimpListId}/segments/${segment.mailChimpSegmentId}",
-			Model(Vector("members_to_add" -> newEmails, "members_to_remove" -> removedEmails))).map { response =>
-			
-			if (response.status.group != StatusGroup.Success)
-				Log.warning(s"MailChimp API returned a non-OK response for segment update. Response: $response")
-		}
+			Model(Vector("members_to_add" -> newEmails, "members_to_remove" -> removedEmails)))
+			.map {
+				case Success(response) =>
+					if (response.status.group != StatusGroup.Success)
+						Log.warning(s"MailChimp API returned a non-OK response for segment update. Response: $response")
+				case Failure(error) => Log(error, "Failed to update mail chimp segment members")
+			}
 	}
 }

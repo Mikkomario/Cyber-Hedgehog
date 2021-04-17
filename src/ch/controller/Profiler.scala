@@ -3,7 +3,7 @@ package ch.controller
 import java.time.Instant
 
 import utopia.flow.util.CollectionExtensions._
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import ch.database.{Entities, Entity, Profiling}
 import ch.model.{DataRead, DataSet}
 import ch.model.profiling.condition.PartialSegmentFilter
@@ -38,7 +38,7 @@ object Profiler
 		}
 	}
 	
-	private def profileSegment(segmentId: Int, allTargetIds: Traversable[Int],
+	private def profileSegment(segmentId: Int, allTargetIds: Iterable[Int],
 							   cachedData: Map[Int, ReadData])(implicit connection: Connection) =
 	{
 		// Won't perform any profiling without filter data
@@ -60,7 +60,7 @@ object Profiler
 		}.getOrElse(cachedData)
 	}
 	
-	private def update(lastProfiling: ProfilingEvent, allTargetIds: Traversable[Int], cachedData: Map[Int, ReadData],
+	private def update(lastProfiling: ProfilingEvent, allTargetIds: Iterable[Int], cachedData: Map[Int, ReadData],
 					   partialFilter: PartialSegmentFilter)(implicit connection: Connection) =
 	{
 		// println("Updating last profiling")
@@ -92,7 +92,7 @@ object Profiler
 		cachedData ++ missingReads
 	}
 	
-	private def reprofile(segmentId: Int, allTargetIds: Traversable[Int], cachedData: Map[Int, ReadData],
+	private def reprofile(segmentId: Int, allTargetIds: Iterable[Int], cachedData: Map[Int, ReadData],
 						  partialFilter: PartialSegmentFilter)(implicit connection: Connection) =
 	{
 		// println("Creating a completely new profiling")

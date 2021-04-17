@@ -4,9 +4,9 @@ import ch.util.Log
 import utopia.access.http.Status.NotFound
 import utopia.access.http.StatusGroup
 import utopia.flow.async.AsyncExtensions._
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import utopia.disciple.apache.Gateway
-import utopia.disciple.http.Request
+import utopia.disciple.http.request.{Request, Timeout}
 import utopia.flow.datastructure.template.{Model, Property}
 
 import scala.concurrent.ExecutionContext
@@ -22,20 +22,19 @@ object RequestYtjData
 	private val baseUri = "https://avoindata.prh.fi/tr/v1/"
 	private val timeout = 90.seconds
 	
+	private val gateway = new Gateway(maximumTimeout = Timeout(timeout))
+	
 	def apply(businessId: String)(implicit exc: ExecutionContext) =
 	{
-		val request = new Request(baseUri + businessId)
+		val request = Request(baseUri + businessId)
 		
-		Gateway.getJSONModelResponse(request).waitFor(timeout) match
+		gateway.modelResponseFor(request).waitForResult(timeout) match
 		{
 			case Success(response) =>
 				if (response.status.group == StatusGroup.Success)
 				{
-					response.body match
-					{
-						case Success(body) => // TODO: Continue
-						case Failure(error) => Log(error, s"Couldn't parse response body for request: $request")
-					}
+					// TODO: Continue
+					// response.body
 				}
 				// Not found results are ignored, other failures are logged
 				else if (response.status != NotFound)

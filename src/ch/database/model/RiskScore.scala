@@ -5,9 +5,9 @@ import ch.database.Tables
 import ch.model.scoring
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.LinkedStorableFactory
+import utopia.vault.nosql.factory.LinkedFactory
 
-object RiskScore extends LinkedStorableFactory[scoring.RiskScore, scoring.RiskScoringEvent]
+object RiskScore extends LinkedFactory[scoring.RiskScore, scoring.RiskScoringEvent]
 {
 	// IMPLEMENTED	---------------------
 	

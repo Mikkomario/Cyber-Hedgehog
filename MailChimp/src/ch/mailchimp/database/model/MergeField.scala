@@ -5,9 +5,9 @@ import utopia.flow.datastructure.immutable
 import utopia.flow.datastructure.immutable.Constant
 import utopia.flow.generic.ValueConversions._
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
-object MergeField extends StorableFactoryWithValidation[ch.mailchimp.model.MergeField]
+object MergeField extends FromValidatedRowModelFactory[ch.mailchimp.model.MergeField]
 {
 	override def table = Tables.mergeField
 	

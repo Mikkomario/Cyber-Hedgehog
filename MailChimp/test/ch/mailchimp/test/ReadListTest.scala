@@ -2,7 +2,7 @@ package ch.mailchimp.test
 
 import java.time.Instant
 
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import ch.database.ConnectionPool
 import ch.mailchimp.database.model.{ContactList, ContactSegment, MergeField}
 import ch.util.ThreadPool

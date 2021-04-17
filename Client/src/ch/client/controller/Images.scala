@@ -5,7 +5,7 @@ import java.nio.file.Paths
 import ch.client.model.ButtonImage
 import ch.util.Log
 import utopia.flow.caching.multi.ReleasingCache
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import utopia.genesis.image.Image
 import utopia.genesis.shape.shape2D.Size
 

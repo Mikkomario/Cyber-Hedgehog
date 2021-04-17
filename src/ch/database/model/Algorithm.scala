@@ -1,13 +1,13 @@
 package ch.database.model
 
 import java.time.Instant
-
 import utopia.flow.generic.ValueConversions._
 import ch.database.Tables
 import ch.model.scoring
 import ch.util.Log
 import utopia.vault.model.immutable.{Result, Storable}
-import utopia.vault.model.immutable.factory.FromResultFactory
+import utopia.vault.nosql.factory.FromResultFactory
+import utopia.vault.sql.JoinType
 
 import scala.util.{Failure, Success}
 
@@ -19,6 +19,8 @@ import scala.util.{Failure, Success}
 object Algorithm extends FromResultFactory[scoring.Algorithm]
 {
 	// IMPLEMENTED	-------------------
+	
+	override def joinType = JoinType.Left
 	
 	override def table = Tables.riskAlgorithm
 	

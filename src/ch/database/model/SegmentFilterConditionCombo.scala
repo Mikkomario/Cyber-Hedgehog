@@ -6,11 +6,11 @@ import utopia.flow.generic.ValueConversions._
 import ch.model.profiling.condition.{CombinationOperator, PartialSegmentFilterConditionCombo}
 import utopia.flow.datastructure.template.{Model, Property}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactory
+import utopia.vault.nosql.factory.FromRowModelFactory
 
 import scala.util.{Failure, Success}
 
-object SegmentFilterConditionCombo extends StorableFactory[PartialSegmentFilterConditionCombo]
+object SegmentFilterConditionCombo extends FromRowModelFactory[PartialSegmentFilterConditionCombo]
 {
 	// IMPLEMENTED	--------------------
 	

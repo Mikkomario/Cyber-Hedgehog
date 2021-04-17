@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="httpcore-4.4.9">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../Utopia-Disciple-Scala/lib/httpcore-4.4.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../Utopia/Disciple/lib/httpcore-4.4.9.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

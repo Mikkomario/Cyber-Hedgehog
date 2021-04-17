@@ -4,7 +4,8 @@ import ch.mailchimp.model.APIConfiguration
 import utopia.access.http.Method.{Get, Patch, Post}
 import utopia.access.http.{Headers, Method}
 import utopia.disciple.apache.Gateway
-import utopia.disciple.http.{BufferedResponse, Request, StringBody}
+import utopia.disciple.http.request.{Request, StringBody}
+import utopia.disciple.http.response.BufferedResponse
 import utopia.flow.datastructure.immutable.{Constant, Model}
 
 import scala.concurrent.ExecutionContext
@@ -16,6 +17,8 @@ import scala.concurrent.ExecutionContext
   */
 object API
 {
+	private val gateway = new Gateway(allowBodyParameters = false)
+	
 	/**
 	  * Performs a request to mailChimp API
 	  * @param method Method used in request
@@ -32,13 +35,13 @@ object API
 		// Forms the request first
 		val uri = s"https://${configuration.dataCenter}.api.mailchimp.com/3.0/$uriEnd"
 		val headers = Headers().withBasicAuthorization("any", configuration.apiKey)
-		val body = if (bodyModel.isEmpty) None else Some(StringBody.json(bodyModel.toJSON))
-		val request = new Request(uri, method, params, headers, body, supportsBodyParameters = false)
+		val body = if (bodyModel.isEmpty) None else Some(StringBody.json(bodyModel.toJson))
+		val request = Request(uri, method, params, headers, body)
 		
 		// println(s"Sending request: $request")
 		
 		// Performs the request and handles the response asynchronously
-		Gateway.getStringResponse(request)
+		gateway.stringResponseFor(request)
 	}
 	
 	/**

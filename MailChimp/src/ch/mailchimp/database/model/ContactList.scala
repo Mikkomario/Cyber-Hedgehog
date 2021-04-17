@@ -4,7 +4,7 @@ import utopia.flow.util.CollectionExtensions._
 import ch.mailchimp.database.Tables
 import ch.util.Log
 import utopia.vault.model.immutable.Result
-import utopia.vault.model.immutable.factory.FromResultFactory
+import utopia.vault.nosql.factory.FromResultFactory
 
 import scala.util.{Failure, Success}
 

@@ -8,11 +8,11 @@ import utopia.flow.generic.ValueConversions._
 import utopia.flow.datastructure.template
 import utopia.flow.datastructure.template.Property
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactory
+import utopia.vault.nosql.factory.FromRowModelFactory
 
 import scala.util.{Failure, Success}
 
-object EntityLabelConfiguration extends StorableFactory[ch.model.EntityLabelConfiguration]
+object EntityLabelConfiguration extends FromRowModelFactory[ch.model.EntityLabelConfiguration]
 {
 	// IMPLEMENTED	----------------------
 	

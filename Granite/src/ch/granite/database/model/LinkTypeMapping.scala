@@ -5,9 +5,9 @@ import utopia.flow.generic.ValueConversions._
 import ch.granite.model
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.LinkedStorableFactory
+import utopia.vault.nosql.factory.LinkedFactory
 
-object LinkTypeMapping extends LinkedStorableFactory[model.LinkTypeMapping, model.SelectOption]
+object LinkTypeMapping extends LinkedFactory[model.LinkTypeMapping, model.SelectOption]
 {
 	// IMPLEMENTED	------------------------
 	

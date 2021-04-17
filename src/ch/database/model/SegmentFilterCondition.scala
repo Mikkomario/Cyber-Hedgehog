@@ -9,11 +9,11 @@ import ch.util.Log
 import utopia.flow.datastructure.template.{Model, Property}
 import utopia.flow.parse.JSONReader
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactory
+import utopia.vault.nosql.factory.FromRowModelFactory
 
 import scala.util.{Failure, Success}
 
-object SegmentFilterCondition extends StorableFactory[ch.model.profiling.condition.SegmentFilterCondition]
+object SegmentFilterCondition extends FromRowModelFactory[ch.model.profiling.condition.SegmentFilterCondition]
 {
 	// IMPLEMENTED	--------------------
 	

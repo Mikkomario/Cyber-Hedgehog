@@ -1,19 +1,17 @@
 package ch.database
 
 import java.time.Instant
-
 import ch.model.DataSet
 import utopia.flow.datastructure.immutable.Value
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.{ConditionalManyAccess, IntIdAccess, ManyAccess, ManyAccessWithIds, ManyIdAccess}
 import utopia.flow.generic.ValueConversions._
 import utopia.vault.sql.Extensions._
-import utopia.flow.util.CollectionExtensions._
+import utopia.vault.nosql.access.{ManyIntIdAccess, ManyRowModelAccess}
 import utopia.vault.sql.{Condition, ConditionElement, Select, SelectAll, Update, Where}
 
 import scala.collection.immutable.HashMap
 
-object EntityIds extends ManyIdAccess[Int] with IntIdAccess
+object EntityIds extends ManyIntIdAccess
 {
 	// COMPUTED	-----------------------
 	
@@ -22,6 +20,10 @@ object EntityIds extends ManyIdAccess[Int] with IntIdAccess
 	
 	
 	// IMPLEMENTED	-------------------
+	
+	override def target = table
+	
+	override def globalCondition = None
 	
 	override def table = Tables.entity
 	
@@ -48,7 +50,7 @@ object EntityIds extends ManyIdAccess[Int] with IntIdAccess
 		 * @param connection DB Connection
 		 * @return ids of entities of specified type
 		 */
-		def get(implicit connection: Connection) = apply(condition)
+		def get(implicit connection: Connection) = find(condition)
 		
 		
 		// OTHER	-------------------
@@ -68,7 +70,7 @@ object EntityIds extends ManyIdAccess[Int] with IntIdAccess
  * @author Mikko Hilpinen
  * @since 6.10.2019, v2+
  */
-object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
+object Entities extends ManyRowModelAccess[ch.model.Entity]
 {
 	// COMPUTED	-------------------------
 	
@@ -95,12 +97,15 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 	 */
 	def links = Links
 	
+	/**
+	 * @return An access point to entity ids
+	 */
+	def ids = EntityIds
+	
 	
 	// IMPLEMENTED	---------------------
 	
-	override def ids = EntityIds
-	
-	override protected def idValue(id: Int) = id
+	override def globalCondition = None
 	
 	override def factory = model.Entity
 	
@@ -146,9 +151,11 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 	
 	// NESTED	--------------------------
 	
-	class EntitiesOfType(typeId: Int) extends ConditionalManyAccess[ch.model.Entity]
+	class EntitiesOfType(typeId: Int) extends ManyRowModelAccess[ch.model.Entity]
 	{
-		override def condition = factory.withTypeId(typeId).toCondition
+		private def condition = factory.withTypeId(typeId).toCondition
+		
+		override def globalCondition = Some(Entities.mergeCondition(condition))
 		
 		override def factory = Entities.factory
 		
@@ -230,7 +237,7 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		}
 	}
 	
-	object Data extends ManyAccess[Int, ch.model.Data]
+	object Data extends ManyRowModelAccess[ch.model.Data]
 	{
 		// COMPUTED	---------------------
 		
@@ -241,7 +248,7 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		
 		// IMPLEMENTED	-----------------
 		
-		override protected def idValue(id: Int) = id
+		override def globalCondition = None
 		
 		override def factory = model.EntityData
 		
@@ -267,7 +274,7 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		 * @param data New data (labelId -> new value)
 		 * @param connection DB connection
 		 */
-		def insert(readId: Int, readTargetId: Int, data: Traversable[(Int, Value)])(implicit connection: Connection) =
+		def insert(readId: Int, readTargetId: Int, data: Iterable[(Int, Value)])(implicit connection: Connection) =
 		{
 			// Will not insert empty values
 			val nonEmptyData = data.filter { _._2.isDefined }
@@ -284,7 +291,7 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		}
 	}
 	
-	object Links extends ManyAccess[Int, ch.model.EntityLink]
+	object Links extends ManyRowModelAccess[ch.model.EntityLink]
 	{
 		// COMPUTED	-----------------------
 		
@@ -294,7 +301,8 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		
 		// IMPLEMENTED	-------------------
 		
-		override protected def idValue(id: Int) = id
+		override def globalCondition = None
+		
 		override def factory = model.EntityLink
 		
 		
@@ -321,7 +329,7 @@ object Entities extends ManyAccessWithIds[Int, ch.model.Entity, EntityIds.type]
 		 * @param linkTypeIds Type of relations registered for the entities
 		 * @param connection DB Connection
 		 */
-		def addBetween(originEntityId: Int, targetEntityId: Int, sourceId: Int, linkTypeIds: Traversable[Int])
+		def addBetween(originEntityId: Int, targetEntityId: Int, sourceId: Int, linkTypeIds: Iterable[Int])
 					  (implicit connection: Connection) = linkTypeIds.foreach { typeId =>
 			factory.forInsert(originEntityId, targetEntityId, typeId, sourceId).insert() }
 		

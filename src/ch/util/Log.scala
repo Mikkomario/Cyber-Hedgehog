@@ -37,8 +37,8 @@ object Log
 	private def apply(error: Option[Throwable], additionalMessage: String): Unit =
 	{
 		// Replaces the writer when it becomes invalid (day changes)
-		if (!writer.get.isValid)
-			writer.set(new Writer)
+		if (!writer.value.isValid)
+			writer.value = new Writer
 		
 		writer.lock { _{ w => w.println(); w.println(LocalDateTime.now())
 			if (additionalMessage.nonEmpty) w.println(additionalMessage); error.foreach { _.printStackTrace(w) } } }

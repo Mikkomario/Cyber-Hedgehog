@@ -1,18 +1,17 @@
 package ch.database
 
-import utopia.flow.generic.ValueConversions._
-import utopia.vault.model.immutable.access.ManyAccess
+import utopia.vault.nosql.access.ManyRowModelAccess
 
 /**
  * Access point for multiple languages
  * @author Mikko Hilpinen
  * @since 30.10.2019, v3+
  */
-object Languages extends ManyAccess[Int, ch.model.Language]
+object Languages extends ManyRowModelAccess[ch.model.Language]
 {
 	// IMPLEMENTED	--------------------
 	
-	override protected def idValue(id: Int) = id
+	override def globalCondition = None
 	
 	override def factory = model.Language
 }

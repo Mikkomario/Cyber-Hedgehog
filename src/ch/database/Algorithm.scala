@@ -2,11 +2,10 @@ package ch.database
 
 import utopia.flow.generic.ValueConversions._
 import ch.model.scoring
-import utopia.flow.datastructure.immutable.Value
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.{SingleAccessWithIds, SingleIdAccess}
+import utopia.vault.nosql.access.{SingleIntIdAccess, SingleModelAccessById}
 
-object AlgorithmIdAccess extends SingleIdAccess[Int]
+object AlgorithmIdAccess extends SingleIntIdAccess
 {
 	// COMPUTED	-------------------------
 	
@@ -14,19 +13,22 @@ object AlgorithmIdAccess extends SingleIdAccess[Int]
 	 * @param connection DB connection (implicit)
 	 * @return The id of the latest algorithm version
 	 */
-	def latest(implicit connection: Connection) = max("created")
+	def latest(implicit connection: Connection) = maxBy("created")
 	
 	
 	// IMPLEMENTED	---------------------
 	
+	override def target = table
+	
+	override def globalCondition = None
+	
 	override def table = Tables.riskAlgorithm
-	override protected def valueToId(value: Value) = value.getInt
 	
 	
 	// OTHER	-------------------------
 	
 	def ofLatestVersionForTypeWithId(typeId: Int)(implicit connection: Connection) =
-		max(model.Algorithm.withTargetTypeId(typeId).toCondition, "created")
+		maxBy("created", Some(model.Algorithm.withTargetTypeId(typeId).toCondition))
 }
 
 /**
@@ -34,11 +36,11 @@ object AlgorithmIdAccess extends SingleIdAccess[Int]
  * @author Mikko Hilpinen
  * @since 25.8.2019, v1.1+
  */
-object Algorithm extends SingleAccessWithIds[Int, scoring.Algorithm, AlgorithmIdAccess.type]
+object Algorithm extends SingleModelAccessById[scoring.Algorithm, Int]
 {
-	override def id = AlgorithmIdAccess
+	def id = AlgorithmIdAccess
 	
-	override protected def idValue(id: Int) = id
+	override def idToValue(id: Int) = id
 	
 	override def factory = model.Algorithm
 }

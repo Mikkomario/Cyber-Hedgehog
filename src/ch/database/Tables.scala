@@ -1,13 +1,15 @@
 package ch.database
 
+import ch.util.ThreadPool
 import utopia.vault.database
+import utopia.vault.model.immutable.Table
 
 /**
   * Keeps track of all used database tables
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
-object Tables
+object Tables extends database.Tables(ConnectionPool)(ThreadPool.executionContext)
 {
 	// ATTRIBUTES	----------------------
 	
@@ -108,5 +110,5 @@ object Tables
 	
 	// OTHER	------------------------
 	
-	private def apply(tableName: String) = database.Tables(databaseName, tableName)
+	private def apply(tableName: String): Table = apply(databaseName, tableName)
 }

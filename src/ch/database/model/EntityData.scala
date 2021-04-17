@@ -1,38 +1,33 @@
 package ch.database.model
 
 import java.time.Instant
-
 import ch.database.Tables
-import ch.util.Log
 import utopia.flow.datastructure.immutable.Value
 import utopia.vault.model.immutable.{Row, StorableWithFactory}
 import utopia.flow.generic.ValueConversions._
-import utopia.flow.util.CollectionExtensions._
 import utopia.flow.parse.JSONReader
-import utopia.vault.model.immutable.factory.FromRowFactory
+import utopia.vault.nosql.factory.FromRowFactory
+import utopia.vault.sql.JoinType
 
 object EntityData extends FromRowFactory[ch.model.Data]
 {
 	// IMPLEMENTED	--------------------
 	
+	override def joinType = JoinType.Left
+	
 	override def apply(row: Row) =
 	{
 		// Read and label information must be successfully parsed
 		DataRead(row).flatMap { read =>
-			
 			EntityLabel(row).flatMap { label =>
-				
 				// Reads own data
-				val result = table.requirementDeclaration.validate(row(table)).toTry.map { valid =>
+				table.requirementDeclaration.validate(row(table)).toTry.map { valid =>
 					
 					val value = valid("value").string.flatMap(JSONReader(_).toOption.flatMap {
 						_.castTo(label.dataType.flowType) }) getOrElse Value.empty
 					
 					ch.model.Data(valid("id").getInt, read, label, value, valid("deprecatedAfter").instant)
 				}
-				
-				result.failure.foreach { Log(_, s"Failed to parse entity data from $row") }
-				result.toOption
 			}
 		}
 	}
@@ -86,7 +81,7 @@ case class EntityData(id: Option[Long] = None, readId: Option[Int] = None, label
 	override def factory = EntityData
 	
 	override def valueProperties = Vector("id" -> id, "read" -> readId, "label" -> labelId,
-		"value" -> value.map { _.toJSON }, "deprecatedAfter" -> deprecatedAfter)
+		"value" -> value.map { _.toJson }, "deprecatedAfter" -> deprecatedAfter)
 	
 	
 	// OTHER	------------------------

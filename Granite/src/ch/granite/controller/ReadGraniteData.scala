@@ -1,9 +1,8 @@
 package ch.granite.controller
 
 import java.time.Instant
-
 import utopia.flow.util.CollectionExtensions._
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import utopia.flow.async.AsyncExtensions._
 import ch.database.{ConnectionPool, DataRead}
 import ch.granite.database.{Service, Services}
@@ -13,7 +12,8 @@ import ch.model.exception.InvalidSettingsException
 import ch.util.Log
 import utopia.access.http.{Headers, StatusGroup}
 import utopia.disciple.apache.Gateway
-import utopia.disciple.http.{BufferedResponse, Request}
+import utopia.disciple.http.request.Request
+import utopia.disciple.http.response.BufferedResponse
 import utopia.flow.parse.JSONReader
 import utopia.vault.database.Connection
 
@@ -27,6 +27,11 @@ import scala.util.{Failure, Success, Try}
   */
 object ReadGraniteData
 {
+	// ATTRIBUTES	----------------------
+	
+	private val graniteGateway = new Gateway()
+	
+	
 	// OTHER	--------------------------
 	
 	/**
@@ -117,23 +122,23 @@ object ReadGraniteData
 	private def getResponseUri(responseId: Int) =
 		s"$baseUri/services/instances/contents/formStructures/formResponses/$responseId?embed=sections&language=en&view=basic"
 	
-	private def checkResponse[R](request: Request, response: BufferedResponse[Try[String]], parse: String => Try[R]) =
+	private def checkResponse[R](request: Request, response: BufferedResponse[String], parse: String => Try[R]) =
 	{
 		if (response.status.group != StatusGroup.Success)
 			Failure(new RequestFailedException(request, response, "Granite request failed"))
 		else
-			response.body.flatMap(parse)
+			parse(response.body)
 	}
 	
 	private def newResponseIdsForService(serviceId: Int, lastReadTime: Option[Instant], user: String, password: String)
 						   (implicit executionContext: ExecutionContext, connection: Connection) =
 	{
 		// First reads all response meta data and checks if there are some that were recently created
-		val request = new Request(listResponsesForServiceUri(serviceId), headers = Headers().withBasicAuthorization(user, password))
+		val request = Request(listResponsesForServiceUri(serviceId), headers = Headers().withBasicAuthorization(user, password))
 		// println(s"Sending request: $request")
-		val responseReceive = Gateway.getStringResponse(request)
+		val responseReceive = graniteGateway.stringResponseFor(request)
 		
-		responseReceive.waitFor(GraniteSettings.requestTimeoutSeconds.seconds).flatMap { response =>
+		responseReceive.waitForResult(GraniteSettings.requestTimeoutSeconds.seconds).flatMap { response =>
 			
 			checkResponse(request, response, JSONReader.apply).map { results =>
 				
@@ -162,15 +167,15 @@ object ReadGraniteData
 		}
 	}
 	
-	private def readResponse(responseId: Int, user: String, password: String, labelMappings: Traversable[LabelMapping],
-							 linkMappings: Traversable[LinkTypeMapping])
+	private def readResponse(responseId: Int, user: String, password: String, labelMappings: Iterable[LabelMapping],
+							 linkMappings: Iterable[LinkTypeMapping])
 							(implicit executionContext: ExecutionContext, connection: Connection) =
 	{
 		// Requests response data from server
-		val request = new Request(getResponseUri(responseId), headers = Headers().withBasicAuthorization(user, password))
-		val responseReceive = Gateway.getStringResponse(request)
+		val request = Request(getResponseUri(responseId), headers = Headers().withBasicAuthorization(user, password))
+		val responseReceive = graniteGateway.stringResponseFor(request)
 		
-		responseReceive.waitFor(GraniteSettings.requestTimeoutSeconds.seconds).flatMap { response =>
+		responseReceive.waitForResult(GraniteSettings.requestTimeoutSeconds.seconds).flatMap { response =>
 			
 			// Expects a json model response
 			checkResponse(request, response, JSONReader(_).map { _.getModel }).map { model =>

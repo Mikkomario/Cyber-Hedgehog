@@ -1,12 +1,10 @@
 package ch.database.model
 
 import ch.database.Tables
-import ch.util.Log
 import utopia.vault.model.immutable.{Row, StorableWithFactory}
-import utopia.vault.model.immutable.factory.FromRowFactory
+import utopia.vault.nosql.factory.FromRowFactory
 import utopia.flow.generic.ValueConversions._
-
-import scala.util.{Failure, Success}
+import utopia.vault.sql.JoinType
 
 object EntityLabel extends FromRowFactory[ch.model.EntityLabel]
 {
@@ -14,14 +12,14 @@ object EntityLabel extends FromRowFactory[ch.model.EntityLabel]
 	
 	override def table = Tables.entityLabel
 	
-	override def apply(row: Row) = table.requirementDeclaration.validate(row(table)).toTry match {
-		case Success(model) =>
+	override def joinType = JoinType.Left
+	
+	override def apply(row: Row) = table.requirementDeclaration.validate(row(table)).toTry
+		.map { model =>
 			val configuration = row.columnData.get(EntityLabelConfiguration.table).flatMap {
 				EntityLabelConfiguration.apply(_).toOption }
-			Some(ch.model.EntityLabel(model("id").getInt, model("targetType").getInt, configuration))
-			
-		case Failure(e) => Log(e, s"Failed to parse EntityLabel from $row"); None
-	}
+			ch.model.EntityLabel(model("id").getInt, model("targetType").getInt, configuration)
+		}
 	
 	override def joinedTables = EntityLabelConfiguration.tables
 	

@@ -1,11 +1,10 @@
 package ch.database
 
 import java.time.Instant
-
 import utopia.vault.sql.Extensions._
 import utopia.flow.generic.ValueConversions._
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.ManyAccess
+import utopia.vault.nosql.access.ManyRowModelAccess
 import utopia.vault.sql.{Select, Where}
 
 /**
@@ -13,7 +12,7 @@ import utopia.vault.sql.{Select, Where}
  * @author Mikko Hilpinen
  * @since 6.10.2019, v2+
  */
-object DataReads extends ManyAccess[Int, ch.model.DataRead]
+object DataReads extends ManyRowModelAccess[ch.model.DataRead]
 {
 	// COMPUTED	------------------------
 	
@@ -22,7 +21,7 @@ object DataReads extends ManyAccess[Int, ch.model.DataRead]
 	
 	// IMPLEMENTED	--------------------
 	
-	override protected def idValue(id: Int) = id
+	override def globalCondition = None
 	
 	override def factory = model.DataRead
 	
@@ -68,8 +67,8 @@ object DataReads extends ManyAccess[Int, ch.model.DataRead]
 	private def timeThresholdCondition(threshold: Instant) = readTimeColumn > threshold
 	
 	// Groups by target & source, orders by data origin time
-	private def grouped(data: Traversable[ch.model.DataRead]) = data.groupBy { _.targetId }
-		.mapValues { _.groupBy { _.sourceId }.mapValues { _.maxBy { _.dataOriginTime } }
+	private def grouped(data: Iterable[ch.model.DataRead]) = data.groupBy { _.targetId }.view
+		.mapValues { _.groupBy { _.sourceId }.view.mapValues { _.maxBy { _.dataOriginTime } }
 			.values.toVector.sortBy { _.dataOriginTime } }.values.toVector
 	
 	

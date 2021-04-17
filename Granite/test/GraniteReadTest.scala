@@ -1,7 +1,7 @@
 import java.time.Instant
 
 import utopia.flow.async.AsyncExtensions._
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import ch.granite.controller.ReadGraniteData
 import ch.util.ThreadPool
 import utopia.flow.generic.DataType

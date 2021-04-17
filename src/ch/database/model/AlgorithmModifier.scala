@@ -6,7 +6,8 @@ import ch.model.scoring
 import ch.model.scoring.RiskFunction
 import ch.util.Log
 import utopia.vault.model.immutable.Result
-import utopia.vault.model.immutable.factory.FromResultFactory
+import utopia.vault.nosql.factory.FromResultFactory
+import utopia.vault.sql.JoinType
 
 import scala.util.{Failure, Success}
 
@@ -18,6 +19,8 @@ import scala.util.{Failure, Success}
 object AlgorithmModifier extends FromResultFactory[scoring.AlgorithmModifier]
 {
 	override def table = Tables.riskScoreModifier
+	
+	override def joinType = JoinType.Left
 	
 	override def joinedTables = EntityLabelGroup.tables
 	
@@ -67,8 +70,9 @@ object AlgorithmModifier extends FromResultFactory[scoring.AlgorithmModifier]
 							else
 							{
 								// Parses group connections from each connection row
-								val labelLinks = otherRows.getOrElse(EntityLabelGroupContent.table, Vector()).flatMap { linkRow =>
-									EntityLabelGroupContent(linkRow) }
+								val labelLinks = otherRows.getOrElse(EntityLabelGroupContent.table, Vector())
+									// TODO: Handle parsing failures
+									.flatMap { linkRow => EntityLabelGroupContent(linkRow).toOption }
 								// Parses group data into a completed model and uses it in algorithm model
 								EntityLabelGroup(groupId.get, groupModel.get, labelLinks) match
 								{

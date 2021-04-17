@@ -1,10 +1,14 @@
 package ch.database
 
-import utopia.vault.model.immutable.access.{IntIdAccess, ManyAccessWithIds, ManyIdAccess}
+import utopia.vault.nosql.access.ManyIntIdAccess
 
-object EntityTypeIds extends ManyIdAccess[Int] with IntIdAccess
+object EntityTypeIds extends ManyIntIdAccess
 {
 	// IMPLEMENTED	-----------------
+	
+	override def target = table
+	
+	override def globalCondition = None
 	
 	override def table = Tables.entityType
 }

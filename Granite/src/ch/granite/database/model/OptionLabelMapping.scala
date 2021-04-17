@@ -6,7 +6,7 @@ import utopia.flow.generic.ValueConversions._
 import ch.granite.model
 import ch.util.Log
 import utopia.vault.model.immutable.{Row, StorableWithFactory}
-import utopia.vault.model.immutable.factory.FromRowFactory
+import utopia.vault.nosql.factory.FromRowFactory
 
 import scala.util.{Failure, Success}
 

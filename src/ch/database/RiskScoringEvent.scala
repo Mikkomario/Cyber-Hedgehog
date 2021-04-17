@@ -1,11 +1,9 @@
 package ch.database
 
 import java.time.Instant
-
-import utopia.flow.generic.ValueConversions._
 import ch.model.scoring
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.SingleAccess
+import utopia.vault.nosql.access.SingleRowModelAccess
 import utopia.vault.sql.{MaxBy, Select, Where}
 
 /**
@@ -13,7 +11,7 @@ import utopia.vault.sql.{MaxBy, Select, Where}
  * @author Mikko Hilpinen
  * @since 25.8.2019, v1.1+
  */
-object RiskScoringEvent extends SingleAccess[Int, scoring.RiskScoringEvent]
+object RiskScoringEvent extends SingleRowModelAccess[scoring.RiskScoringEvent]
 {
 	// COMPUTED	-------------------------
 	
@@ -26,7 +24,7 @@ object RiskScoringEvent extends SingleAccess[Int, scoring.RiskScoringEvent]
 	
 	// IMPLEMENTED	---------------------
 	
-	override protected def idValue(id: Int) = id
+	override def globalCondition = None
 	
 	override def factory = model.RiskScoringEvent
 	

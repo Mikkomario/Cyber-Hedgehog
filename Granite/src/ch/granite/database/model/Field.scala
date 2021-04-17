@@ -6,14 +6,14 @@ import ch.granite.database.Tables
 import utopia.flow.datastructure.immutable
 import utopia.flow.datastructure.immutable.Constant
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
 /**
   * Used for reading & parsing field data from DB
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
-object Field extends StorableFactoryWithValidation[granite.model.Field]
+object Field extends FromValidatedRowModelFactory[granite.model.Field]
 {
 	// IMPLEMENTED	---------------------
 	

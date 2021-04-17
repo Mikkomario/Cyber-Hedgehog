@@ -13,7 +13,7 @@ object DataSet
 	 * @param data Entity data
 	 * @return A data set based on the data
 	 */
-	def apply(data: Traversable[Data]) = new DataSet(data.map { d => d.label -> d.value }.toSet)
+	def apply(data: Iterable[Data]) = new DataSet(data.map { d => d.label -> d.value }.toSet)
 }
 
 /**

@@ -7,12 +7,15 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="scala-sdk-2.12.8" level="application" />
     <orderEntry type="module" module-name="Cyber-Hedgehog" />
-    <orderEntry type="module" module-name="Utopia-Flow-Scala" />
-    <orderEntry type="module" module-name="Utopia-Genesis-Scala" />
-    <orderEntry type="module" module-name="Utopia-Inception-Scala" />
-    <orderEntry type="module" module-name="Utopia-Reflection" />
-    <orderEntry type="module" module-name="Utopia-Vault-Scala" />
+    <orderEntry type="library" name="mariadb-java-client-1.5.9" level="project" />
+    <orderEntry type="library" name="scala-sdk-2.13.3" level="application" />
+    <orderEntry type="module" module-name="Access" />
+    <orderEntry type="module" module-name="Disciple" />
+    <orderEntry type="module" module-name="Flow" />
+    <orderEntry type="module" module-name="Genesis" />
+    <orderEntry type="module" module-name="Inception" />
+    <orderEntry type="module" module-name="Reflection" />
+    <orderEntry type="module" module-name="Vault" />
   </component>
 </module>

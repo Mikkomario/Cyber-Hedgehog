@@ -9,9 +9,9 @@ import utopia.flow.generic.ValueConversions._
 import utopia.flow.datastructure.immutable
 import utopia.flow.datastructure.immutable.Constant
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
-object Profiling extends StorableFactoryWithValidation[ProfilingEvent]
+object Profiling extends FromValidatedRowModelFactory[ProfilingEvent]
 {
 	// IMPLEMENTED	-------------------
 	

@@ -7,7 +7,7 @@ import ch.model.profiling.condition.{PartialSegmentFilter, PartialSegmentFilterC
 import ch.model.profiling.{ProfilingEvent, ProfilingSegment}
 import ch.util.Log
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.{IntIdAccess, ItemAccess, ManyAccessWithIds, ManyIdAccess, SingleAccess}
+import utopia.vault.nosql.access.{ManyIntIdAccess, ManyRowModelAccess, SingleIdModelAccess, SingleModelAccessById, SingleRowModelAccess}
 import utopia.vault.sql.{Select, Where}
 
 /**
@@ -15,7 +15,7 @@ import utopia.vault.sql.{Select, Where}
   * @author Mikko Hilpinen
   * @since 17.7.2019, v0.1+
   */
-object Profiling extends SingleAccess[Int, ProfilingEvent]
+object Profiling extends SingleRowModelAccess[ProfilingEvent] with SingleModelAccessById[ProfilingEvent, Int]
 {
 	// COMPUTED	-----------------------
 	
@@ -26,7 +26,7 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 	
 	// IMPLEMENTED	-------------------
 	
-	override protected def idValue(id: Int) = id
+	override def idToValue(id: Int) = id
 	
 	override def factory = model.Profiling
 	
@@ -145,7 +145,7 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 	
 	// NESTED	------------------------
 	
-	class SingleProfiling(id: Int) extends ItemAccess[ProfilingEvent](id, factory)
+	class SingleProfiling(id: Int) extends SingleIdModelAccess[ProfilingEvent](id, factory)
 	{
 		/**
 		  * Finds ids for all entities that were associated with a segment in this profiling
@@ -158,9 +158,13 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 		}
 	}
 	
-	object SegmentIds extends ManyIdAccess[Int] with IntIdAccess
+	object SegmentIds extends ManyIntIdAccess
 	{
 		// IMPLEMENTED	-------------------
+		
+		override def target = table
+		
+		override def globalCondition = None
 		
 		override def table = model.ProfilingSegment.table
 		
@@ -172,24 +176,24 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 		 * @param connection DB Connection
 		 * @return Ids of all segments that target the specified entity type
 		 */
-		def forContentTypeWithId(typeId: Int)(implicit connection: Connection) = apply(
+		def forContentTypeWithId(typeId: Int)(implicit connection: Connection) = find(
 			model.ProfilingSegment.withContentTypeId(typeId).toCondition)
 	}
 	
-	object Segments extends ManyAccessWithIds[Int, ProfilingSegment, SegmentIds.type]
+	object Segments extends ManyRowModelAccess[ProfilingSegment]
 	{
-		override def ids = SegmentIds
+		def ids = SegmentIds
 		
-		override protected def idValue(id: Int) = id
+		override def globalCondition = None
 		
 		override def factory = model.ProfilingSegment
 	}
 	
-	object Segment extends SingleAccess[Int, ProfilingSegment]
+	object Segment extends SingleModelAccessById[ProfilingSegment, Int]
 	{
 		// IMPLEMENTED	-----------------
 		
-		override protected def idValue(id: Int) = id
+		override def idToValue(id: Int) = id
 		
 		override def factory = model.ProfilingSegment
 		
@@ -198,7 +202,7 @@ object Profiling extends SingleAccess[Int, ProfilingEvent]
 		
 		// NESTED	---------------------
 		
-		class SingleSegment(id: Int) extends ItemAccess[ProfilingSegment](id, factory)
+		class SingleSegment(id: Int) extends SingleIdModelAccess[ProfilingSegment](id, factory)
 		{
 			/**
 			  * Returns the latest profiling event for this segment

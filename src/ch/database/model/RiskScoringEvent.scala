@@ -7,9 +7,9 @@ import ch.database.Tables
 import ch.model.scoring
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
-object RiskScoringEvent extends StorableFactoryWithValidation[scoring.RiskScoringEvent]
+object RiskScoringEvent extends FromValidatedRowModelFactory[scoring.RiskScoringEvent]
 {
 	// IMPLEMENTED	---------------------
 	

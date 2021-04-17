@@ -1,18 +1,17 @@
 package ch.database.model
 
 import java.time.Instant
-
 import ch.database.Tables
 import utopia.flow.generic.ValueConversions._
 import ch.model.profiling.condition.{CombinationOperator, PartialSegmentFilter}
 import ch.model.exception.NoSuchOperatorException
 import utopia.flow.datastructure.template.{Model, Property}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactory
+import utopia.vault.nosql.factory.FromRowModelFactory
 
 import scala.util.{Failure, Success}
 
-object SegmentFilter extends StorableFactory[PartialSegmentFilter]
+object SegmentFilter extends FromRowModelFactory[PartialSegmentFilter]
 {
 	// IMPLEMENTED	---------------
 	

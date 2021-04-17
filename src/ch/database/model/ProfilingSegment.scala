@@ -5,9 +5,9 @@ import ch.database.Tables
 import ch.model.profiling
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
-object ProfilingSegment extends StorableFactoryWithValidation[profiling.ProfilingSegment]
+object ProfilingSegment extends FromValidatedRowModelFactory[profiling.ProfilingSegment]
 {
 	// IMPLEMENTED	--------------------
 	

@@ -2,19 +2,19 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Utopia/Access/Access.iml" filepath="$PROJECT_DIR$/../Utopia/Access/Access.iml" />
       <module fileurl="file://$PROJECT_DIR$/BackEnd/BackEnd.iml" filepath="$PROJECT_DIR$/BackEnd/BackEnd.iml" />
       <module fileurl="file://$PROJECT_DIR$/Client/Client.iml" filepath="$PROJECT_DIR$/Client/Client.iml" />
       <module fileurl="file://$PROJECT_DIR$/Cyber-Hedgehog.iml" filepath="$PROJECT_DIR$/Cyber-Hedgehog.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia/Disciple/Disciple.iml" filepath="$PROJECT_DIR$/../Utopia/Disciple/Disciple.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia/Flow/Flow.iml" filepath="$PROJECT_DIR$/../Utopia/Flow/Flow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia/Genesis/Genesis.iml" filepath="$PROJECT_DIR$/../Utopia/Genesis/Genesis.iml" />
       <module fileurl="file://$PROJECT_DIR$/Granite/Granite.iml" filepath="$PROJECT_DIR$/Granite/Granite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia/Inception/Inception.iml" filepath="$PROJECT_DIR$/../Utopia/Inception/Inception.iml" />
       <module fileurl="file://$PROJECT_DIR$/MailChimp/MailChimp.iml" filepath="$PROJECT_DIR$/MailChimp/MailChimp.iml" />
       <module fileurl="file://$PROJECT_DIR$/PRH/PRH.iml" filepath="$PROJECT_DIR$/PRH/PRH.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utopia-Access-Scala/.idea/Utopia-Access-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Access-Scala/.idea/Utopia-Access-Scala.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utopia-Disciple-Scala/.idea/Utopia-Disciple-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Disciple-Scala/.idea/Utopia-Disciple-Scala.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utopia-Flow-Scala/Utopia-Flow-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Flow-Scala/Utopia-Flow-Scala.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utopia-Genesis-Scala/.idea/Utopia-Genesis-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Genesis-Scala/.idea/Utopia-Genesis-Scala.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utopia-Inception-Scala/.idea/Utopia-Inception-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Inception-Scala/.idea/Utopia-Inception-Scala.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utopia-Reflection/.idea/Utopia-Reflection.iml" filepath="$PROJECT_DIR$/../Utopia-Reflection/.idea/Utopia-Reflection.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../Utopia-Vault-Scala/.idea/Utopia-Vault-Scala.iml" filepath="$PROJECT_DIR$/../Utopia-Vault-Scala/.idea/Utopia-Vault-Scala.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia/Reflection/Reflection.iml" filepath="$PROJECT_DIR$/../Utopia/Reflection/Reflection.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../Utopia/Vault/Vault.iml" filepath="$PROJECT_DIR$/../Utopia/Vault/Vault.iml" />
     </modules>
   </component>
 </project>

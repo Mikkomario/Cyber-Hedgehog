@@ -6,14 +6,14 @@ import ch.client.view.EntityLabelsVC
 import ch.database.{ConnectionPool, Language}
 import ch.util.ThreadPool
 import utopia.flow.generic.DataType
-import utopia.genesis.color.RGB
+import utopia.genesis.color.Rgb
 import utopia.genesis.handling.ActorLoop
 import utopia.genesis.handling.mutable.ActorHandler
 import utopia.reflection.container.stack.StackHierarchyManager
 import utopia.reflection.container.swing.window.Frame
 import utopia.reflection.container.swing.window.WindowResizePolicy.User
 import utopia.reflection.localization.{Localizer, NoLocalization}
-import utopia.reflection.shape.StackLength
+import utopia.reflection.shape.stack.StackLength
 import utopia.reflection.text.Font
 import utopia.reflection.util.{ComponentContext, ComponentContextBuilder}
 import utopia.vault.util.{ErrorHandling, ErrorHandlingPrinciple}
@@ -34,9 +34,9 @@ object CyberHedgehogClient extends App
 	
 	// Test version
 	implicit val colorScheme: ColorScheme = ColorScheme(
-		ColorSet(RGB.withValues(48, 63, 159), RGB.withValues(102, 106, 209), RGB.withValues(0, 25, 112)),
-		ColorSet(RGB.withValues(170, 0, 255), RGB.withValues(226, 84, 255), RGB.withValues(114, 0, 202)),
-		ColorSet(RGB.grayWithValue(225), RGB.grayWithValue(245), RGB.grayWithValue(164)))
+		ColorSet(Rgb.withValues(48, 63, 159), Rgb.withValues(102, 106, 209), Rgb.withValues(0, 25, 112)),
+		ColorSet(Rgb.withValues(170, 0, 255), Rgb.withValues(226, 84, 255), Rgb.withValues(114, 0, 202)),
+		ColorSet(Rgb.grayWithValue(225), Rgb.grayWithValue(245), Rgb.grayWithValue(164)))
 	implicit val margins: Margins = Margins(16)
 	
 	ErrorHandling.defaultPrinciple = ErrorHandlingPrinciple.Throw
@@ -68,5 +68,5 @@ object CyberHedgehogClient extends App
 	actionLoop.startAsync()
 	StackHierarchyManager.startRevalidationLoop()
 	frame.startEventGenerators(actorHandler)
-	frame.isVisible = true
+	frame.visible = true
 }

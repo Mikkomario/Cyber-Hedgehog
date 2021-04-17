@@ -1,20 +1,20 @@
 package ch.database
 
-import utopia.flow.generic.ValueConversions._
 import ch.model.scoring
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.SingleAccess
+import utopia.vault.nosql.access.SingleRowModelAccess
 
 /**
  * Used for accessing individual risk scores in DB
  * @author Mikko Hilpinen
  * @since 25.8.2019, v1.1+
  */
-object RiskScore extends SingleAccess[Int, scoring.RiskScore]
+object RiskScore extends SingleRowModelAccess[scoring.RiskScore]
 {
 	// IMPLEMENTED	--------------------
 	
-	override protected def idValue(id: Int) = id
+	override def globalCondition = None
+	
 	override def factory = model.RiskScore
 	
 	

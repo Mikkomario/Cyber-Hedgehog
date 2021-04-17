@@ -1,7 +1,7 @@
 package ch.mailchimp.controller
 
 import utopia.flow.async.AsyncExtensions._
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 import utopia.flow.generic.ValueConversions._
 import utopia.flow.util.CollectionExtensions._
 import ch.database.Entities
@@ -45,14 +45,14 @@ object ContactsAPI
 			// Checks whether specified email is already in the API, adds one if necessary
 			val emailHash = MD5.hash(email)
 			val mergeFields = makeMergeFieldsModel(list, dataForNewContact)
-			ensureExistenceOf(email, emailHash, mergeFields, list).map { alreadyExisted =>
+			ensureExistenceOf(email, emailHash, mergeFields, list).mapIfSuccess { alreadyExisted =>
 				
 				// If there already was a contact, updates its merge fields
 				if (alreadyExisted)
 				{
 					API.patch(s"lists/${list.mailChimpListId}/members/$emailHash",
 						Model(Vector("merge_fields" -> mergeFields)))
-						.waitFor(MailChimpSettings.requestTimeoutSeconds.seconds) match
+						.waitForResult(MailChimpSettings.requestTimeoutSeconds.seconds) match
 					{
 						case Success(response) =>
 							if (response.status.group != StatusGroup.Success)
@@ -69,7 +69,7 @@ object ContactsAPI
 								 (implicit exc: ExecutionContext, configuration: APIConfiguration) =
 	{
 		// First tries to read contact data
-		API.get(s"lists/${list.mailChimpListId}/members/$emailHash").map { getResponse =>
+		API.get(s"lists/${list.mailChimpListId}/members/$emailHash").mapIfSuccess { getResponse =>
 		
 			getResponse.status match
 			{
@@ -83,7 +83,7 @@ object ContactsAPI
 						"merge_fields" -> mergeFields))
 					
 					API.post(s"lists/${list.mailChimpListId}/members/", contactModel)
-						.waitFor(MailChimpSettings.requestTimeoutSeconds.seconds) match
+						.waitForResult(MailChimpSettings.requestTimeoutSeconds.seconds) match
 					{
 						case Success(postResponse) =>
 							if (postResponse.status.group != StatusGroup.Success)

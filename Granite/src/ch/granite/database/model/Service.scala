@@ -5,9 +5,9 @@ import utopia.flow.generic.ValueConversions._
 import ch.granite.model
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.StorableFactoryWithValidation
+import utopia.vault.nosql.factory.FromValidatedRowModelFactory
 
-object Service extends StorableFactoryWithValidation[model.Service]
+object Service extends FromValidatedRowModelFactory[model.Service]
 {
 	override protected def fromValidatedModel(model: Model[Constant]) = ch.granite.model.Service(model("id").getInt,
 		model("graniteId").getInt)

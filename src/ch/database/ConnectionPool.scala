@@ -1,6 +1,6 @@
 package ch.database
 
-import utopia.flow.util.TimeExtensions._
+import utopia.flow.time.TimeExtensions._
 
 /**
   * Provides database connections for classes under this project

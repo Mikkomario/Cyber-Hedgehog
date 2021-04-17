@@ -4,14 +4,14 @@ import ch.granite.model
 import ch.granite.database.Tables
 import utopia.flow.datastructure.immutable.Model
 import utopia.flow.datastructure.immutable.Constant
-import utopia.vault.model.immutable.factory.LinkedStorableFactory
+import utopia.vault.nosql.factory.LinkedFactory
 
 /**
   * Used for reading & parsing granite selection option data from DB
   * @author Mikko Hilpinen
   * @since 10.7.2019, v0.1+
   */
-object SelectOption extends LinkedStorableFactory[model.SelectOption, model.Field]
+object SelectOption extends LinkedFactory[model.SelectOption, model.Field]
 {
 	// IMPLEMENTED	------------------
 	

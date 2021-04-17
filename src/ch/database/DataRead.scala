@@ -1,8 +1,8 @@
 package ch.database
 
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.{ItemAccess, SingleAccess}
 import utopia.flow.generic.ValueConversions._
+import utopia.vault.nosql.access.{SingleIdModelAccess, SingleModelAccessById}
 import utopia.vault.sql.{MaxBy, Select, Where}
 
 /**
@@ -10,7 +10,7 @@ import utopia.vault.sql.{MaxBy, Select, Where}
  * @author Mikko Hilpinen
  * @since 6.10.2019, v2+
  */
-object DataRead extends SingleAccess[Int, ch.model.DataRead]
+object DataRead extends SingleModelAccessById[ch.model.DataRead, Int]
 {
 	// COMPUTED	--------------------
 	
@@ -37,7 +37,7 @@ object DataRead extends SingleAccess[Int, ch.model.DataRead]
 	
 	// IMPLEMENTED	----------------
 	
-	override protected def idValue(id: Int) = id
+	override def idToValue(id: Int) = id
 	
 	override def factory = model.DataRead
 	
@@ -46,7 +46,7 @@ object DataRead extends SingleAccess[Int, ch.model.DataRead]
 	
 	// NESTED	------------------------
 	
-	class SingleDataRead(id: Int) extends ItemAccess[ch.model.DataRead](id, factory)
+	class SingleDataRead(id: Int) extends SingleIdModelAccess[ch.model.DataRead](id, factory)
 	{
 		/**
 		 * Finds all target data that was read at this read event

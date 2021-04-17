@@ -1,15 +1,13 @@
 package ch.database.model
 
 import java.time.Instant
-
 import ch.database.Tables
-import ch.model
 import utopia.flow.datastructure.immutable.{Constant, Model}
 import utopia.vault.model.immutable.StorableWithFactory
-import utopia.vault.model.immutable.factory.LinkedStorableFactory
 import utopia.flow.generic.ValueConversions._
+import utopia.vault.nosql.factory.LinkedFactory
 
-object EntityLink extends LinkedStorableFactory[ch.model.EntityLink, ch.model.EntityLinkType]
+object EntityLink extends LinkedFactory[ch.model.EntityLink, ch.model.EntityLinkType]
 {
 	// IMPLEMENTED	------------------
 	

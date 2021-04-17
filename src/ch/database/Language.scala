@@ -1,19 +1,18 @@
 package ch.database
 
-import utopia.flow.generic.ValueConversions._
 import utopia.vault.database.Connection
-import utopia.vault.model.immutable.access.SingleAccess
+import utopia.vault.nosql.access.SingleRowModelAccess
 
 /**
  * Access point for individual languages
  * @author Mikko Hilpinen
  * @since 30.10.2019, v3+
  */
-object Language extends SingleAccess[Int, ch.model.Language]
+object Language extends SingleRowModelAccess[ch.model.Language]
 {
 	// IMPLEMENTED	-----------------------
 	
-	override protected def idValue(id: Int) = id
+	override def globalCondition = None
 	
 	override def factory = model.Language
 	
